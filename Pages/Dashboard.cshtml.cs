@@ -150,7 +150,16 @@ namespace SpotifyR
                 {
                     foreach (var album in artistsAlbums)
                     {
-                        DateTime albumDate = DateTime.Parse(album.release_date);
+                        DateTime albumDate = new DateTime();
+                        if (album.release_date_precision == "year")
+                        {
+                            albumDate = new DateTime(Int32.Parse(album.release_date), 1, 1);
+                        }
+                        else 
+                        {
+                            albumDate = DateTime.Parse(album.release_date);
+                        }
+                        
                         TimeSpan ts = DateTime.Now.Subtract(albumDate);
                         if (album.release_date.Length < 5 || ts.TotalDays > 30) continue;
                         resultList.Add(album);
@@ -160,7 +169,17 @@ namespace SpotifyR
                     {
                         foreach (var single in artistsSingles)
                         {
-                            DateTime singleDate = DateTime.Parse(single.release_date);
+                            DateTime singleDate = new DateTime();
+                            
+                            if (single.release_date_precision == "year")
+                            {
+                                singleDate = new DateTime(Int32.Parse(single.release_date), 1, 1);
+                            }
+                            else 
+                            {
+                                singleDate = DateTime.Parse(single.release_date);
+                            }
+
                             TimeSpan ts = DateTime.Now.Subtract(singleDate);
                             if (single.release_date.Length < 5 || ts.TotalDays > 15) continue;
                             resultList.Add(single);
