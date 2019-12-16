@@ -166,7 +166,8 @@ namespace SpotifyR
                             resultList.Add(single);
                         }
                     }
-                    //feats???
+                    // TODO feats???
+                    // TODO compilations??
                 }
             }
             return resultList;
@@ -183,7 +184,7 @@ namespace SpotifyR
                     var albumTracks = albumSpecific.tracks.items.ToList();
                     albumTracks.Sort((p, q) => p.popularity.CompareTo(q.popularity));
                     var returnSize = albumTracks.Count * 0.15;
-                    returnSize = returnSize<1 ? 1 : returnSize;
+                    returnSize = returnSize < 1 ? 1 : returnSize;
                     for (var i = 0; i < returnSize; i++) resultList.Add(albumTracks[i]);
                 }
             }
