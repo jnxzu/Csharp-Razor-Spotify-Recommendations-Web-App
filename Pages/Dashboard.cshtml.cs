@@ -150,39 +150,28 @@ namespace SpotifyR
                 {
                     foreach (var album in artistsAlbums)
                     {
-                        DateTime albumDate = new DateTime();
-                        if (album.release_date_precision == "year")
+                        if(album.release_date_precision == "day")
                         {
-                            albumDate = new DateTime(Int32.Parse(album.release_date), 1, 1);
+                            DateTime albumDate = DateTime.Parse(album.release_date);
+                            TimeSpan ts = DateTime.Now.Subtract(albumDate);
+                            if (ts.TotalDays < 30)
+                                resultList.Add(album);
                         }
-                        else 
-                        {
-                            albumDate = DateTime.Parse(album.release_date);
-                        }
-                        
-                        TimeSpan ts = DateTime.Now.Subtract(albumDate);
-                        if (album.release_date.Length < 5 || ts.TotalDays > 30) continue;
-                        resultList.Add(album);
                     }
+
                     var artistsSingles = GetArtistsSingles(access_token, artist.id).items;
+
                     if (artistsSingles != null)
                     {
                         foreach (var single in artistsSingles)
                         {
-                            DateTime singleDate = new DateTime();
-                            
-                            if (single.release_date_precision == "year")
+                            if(single.release_date_precision == "day")
                             {
-                                singleDate = new DateTime(Int32.Parse(single.release_date), 1, 1);
+                                DateTime singleDate = DateTime.Parse(single.release_date);
+                                TimeSpan ts = DateTime.Now.Subtract(singleDate);
+                                if (ts.TotalDays < 30)
+                                    resultList.Add(single);
                             }
-                            else 
-                            {
-                                singleDate = DateTime.Parse(single.release_date);
-                            }
-
-                            TimeSpan ts = DateTime.Now.Subtract(singleDate);
-                            if (single.release_date.Length < 5 || ts.TotalDays > 15) continue;
-                            resultList.Add(single);
                         }
                     }
                     //feats???
