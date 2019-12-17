@@ -6,8 +6,9 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
+using SpotifyR.Data;
 
-namespace SpotifyR
+namespace SpotifyR.Pages
 {
     public class DashboardModel : PageModel
     {

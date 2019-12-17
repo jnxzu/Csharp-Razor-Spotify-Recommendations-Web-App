@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace SpotifyR{
+namespace SpotifyR.Pages
+{
     public class CallbackModel : PageModel{
         public IActionResult OnGet(string code, string state)
         {

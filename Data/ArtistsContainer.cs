@@ -1,4 +1,4 @@
-namespace SpotifyR
+namespace SpotifyR.Data
 {
     public class ArtistsContainer
     {

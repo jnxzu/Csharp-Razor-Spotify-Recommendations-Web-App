@@ -1,4 +1,4 @@
-namespace SpotifyApp.Data
+namespace SpotifyR.Data
 {
     public class DatabaseSettings : IDatabaseSettings
     {

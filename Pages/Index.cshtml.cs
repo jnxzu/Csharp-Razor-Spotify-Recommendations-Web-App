@@ -3,8 +3,10 @@ using System.Linq;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SpotifyR.Data;
 
-namespace SpotifyR{
+namespace SpotifyR.Pages
+{
     public class IndexModel : PageModel{
         public static string RandomString(int length)
         {
