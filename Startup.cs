@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SpotifyR.Data;
+using SpotifyR.Services;
+using Microsoft.Extensions.Options;
 
 namespace C__Razor___Polecanko
 {
@@ -18,6 +21,16 @@ namespace C__Razor___Polecanko
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+
+            services.Configure<DatabaseSettings>(
+                Configuration.GetSection(nameof(DatabaseSettings)));
+
+            services.AddSingleton<DatabaseSettings>(sp => 
+                sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
+            
+            services.AddSingleton<UserService>();
+
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
