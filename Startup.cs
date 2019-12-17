@@ -29,7 +29,7 @@ namespace C__Razor___Polecanko
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
             
             services.AddSingleton<UserService>();
-
+            services.AddMvc();
             services.AddControllers();
         }
 
