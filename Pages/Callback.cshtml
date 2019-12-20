@@ -9,15 +9,16 @@
 </main>
 <script>
     $(document).ready(function () {
-        setTimeout(function () {
+
             var url = new URL(window.location.href);
             var status = '@ViewData["status"]';
             if (status == 'ok'){
                 var code = url.searchParams.get("code");
                 window.location.href = 'Dashboard?code=' + code;
             } else {
-                window.location.href = '/';
+                setTimeout(function () {
+                    window.location.href = '/';
+                },1500)
             }
-        },1500)
     });
 </script>

@@ -20,7 +20,7 @@ namespace SpotifyR{
             qb.Add("client_id", sAuth.clientID);
             qb.Add("response_type", "code");
             qb.Add("redirect_uri", sAuth.redirectURL);
-            qb.Add("scope", "user-read-private user-library-read");
+            qb.Add("scope", "user-follow-read");
             qb.Add("state", state);
             TempData["state"] = state;
             ViewData["params"] = qb.ToQueryString().ToString();

@@ -12,13 +12,7 @@
     <dl id="new">
         @foreach (var track in Model.NEW_RELEASES){
             <dt class="font-heading font-big font-green">@track.artists[0].name - @track.name</dt>
-            <dd class="font-content font-medium font-white">#player @track.album.name #duration</dd>
+            <dd class="font-content font-medium font-white">#player #track.album.name #duration</dd>
         }
     </dl>
-    <!-- <dl id="discover" hidden>
-        @foreach (var track in Model.DISCOVER){
-            <dt class="font-heading font-big font-green">@track.artists[0].name - @track.name</dt>
-            <dd class="font-content font-medium font-white">#player @track.album.name #duration</dd>
-        }
-    </dl> -->
 </main>
