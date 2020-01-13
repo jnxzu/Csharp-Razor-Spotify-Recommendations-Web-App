@@ -1,0 +1,69 @@
+.abloh {
+  position: relative;
+  word-wrap: break-word;
+  z-index: 1;
+}
+h1 {
+  font-weight: 900;
+  font-size: 5em;
+}
+h2 {
+  font-weight: 100;
+  font-size: 2em;
+}
+h3 {
+  font-weight: 100;
+  font-size: 1em;
+}
+p {
+  font-weight: 100;
+  font-size: 0.9em;
+}
+.nonsense-number {
+  font-weight: 900;
+  font-size: 2em;
+  opacity: 0;
+  transition: 0.8s ease;
+}
+.nonsense-number.load {
+  opacity: 1;
+}
+#welcome-h {
+  top: 12%;
+  left: 63%;
+}
+#polecappka-h {
+  top: 13%;
+  left: 15%;
+}
+#welcome-p {
+  top: 18%;
+  left: 12%;
+}
+#new-h {
+  top: 35%;
+  left: 60%;
+}
+#discover-h {
+  top: 36%;
+  left: 15%;
+}
+#authenticate-h {
+  top: 28%;
+  left: 17%;
+}
+#auth-button {
+  top: 40%;
+  left: 40%;
+  background: var(--green);
+  border: none;
+  height: 4vh;
+  width: 12vw;
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+#auth-button:hover {
+  height: 5vh;
+  width: 13vw;
+}

@@ -1,72 +1,37 @@
 ﻿@page
 @model SpotifyR.IndexModel
-<main class="no-scroll">
-    <div class='v-align'>
-        <button class='anim-button'>
-            <span class="font-heading font-big font-white">Authenticate</span>
-        </button>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-        <span class='particles-circle'></span>
-    </div>
-</main>
-
-<script>
-    $(document).ready(function () {
-        $(".anim-button").click(function () {
-            var params = '@ViewData["params"]';
-            params = params.replace(/&amp;/g, "&");
-            window.location.href = "https://accounts.spotify.com/authorize/".concat(params);
+<div id="left" class="section">
+    <h2 class="abloh" id="welcome-h">welcome to</h1>
+    <h1 class="abloh" id="polecappka-h">" polecappka "</h1>
+    <p class="abloh" id="welcome-p">an innovative Spotify-integrated<br/>music discovery and notification engine<br/>now used by <span id="users-num" class="nonsense-number">@ViewData["users"]</span> users</p>
+    <h3 class="abloh" id="new-h">users have been notified<br/>of <span id="new-num" class="nonsense-number">@ViewData["new"]</span> new releases</h3>
+    <h3 class="abloh" id="discover-h"><span id="discover-num" class="nonsense-number">@ViewData["discover"]</span> new songs<br/>have been discovered</h3>
+</div>
+<div id="right" class="section">
+    <h1 class="abloh" id="authenticate-h">enjoy your music.</h1>
+    <button class="abloh" id="auth-button">join now</button>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function(){
+            $("#auth-button").click(function () {
+                var params = '@ViewData["params"]';
+                params = params.replace(/&amp;/g, "&");
+                window.location.href = "https://accounts.spotify.com/authorize/".concat(params);
+            })
+            $(document).find(".nonsense-number").addClass("load");
+            setInterval(function(){
+                var num = parseInt($("#discover-num").text());
+                $("#discover-num").text(num+1);
+            }, 2450)
+            setInterval(function(){
+                var num = parseInt($("#new-num").text());
+                $("#new-num").text(num+1);
+            }, 1250)
+            setInterval(function(){
+                var num = parseInt($("#users-num").text());
+                $("#users-num").text(num+1);
+            }, 12000)
         })
-        $(".anim-button").hover(function () {
-            if (
-                !$(".anim-button")
-                    .parent()
-                    .hasClass("active")
-            ) {
-                $(this)
-                    .parent()
-                    .stop()
-                    .addClass("active");
-                setTimeout(function () {
-                    $(".anim-button")
-                        .parent()
-                        .removeClass("active");
-                }, 1500);
-            }
-        });
-    });
-
-</script>
+    </script>
+}

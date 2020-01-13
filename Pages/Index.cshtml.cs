@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace SpotifyR{
-    public class IndexModel : PageModel{
+namespace SpotifyR
+{
+    public class IndexModel : PageModel
+    {
         public static string RandomString(int length)
         {
             var random = new Random();
@@ -13,7 +15,13 @@ namespace SpotifyR{
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-        public IActionResult OnGet(){
+        public IActionResult OnGet()
+        {
+            Random r = new Random();
+            var randomVal = r.Next(9000, 100000);
+            @ViewData["users"] = randomVal;
+            @ViewData["new"] = randomVal * r.Next(23, 161);
+            @ViewData["discover"] = randomVal * r.Next(16, 112);
             SpotifyAuth sAuth = new SpotifyAuth();
             var state = RandomString(8);
             var qb = new QueryBuilder();
