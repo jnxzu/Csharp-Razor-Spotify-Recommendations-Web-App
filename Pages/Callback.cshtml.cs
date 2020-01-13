@@ -4,19 +4,21 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace SpotifyR{
-    public class CallbackModel : PageModel{
+namespace SpotifyR
+{
+    public class CallbackModel : PageModel
+    {
         public IActionResult OnGet(string code, string state)
         {
             if ((string)TempData["state"] == state)
             {
-                @ViewData["state"] = "Authentication Successfull";
-                @ViewData["status"] = "ok";
+                @ViewData["state"] = "authentication successfull";
+                @ViewData["status"] = true;
             }
             else
             {
-                @ViewData["state"] = "Authentication Failed: Invalid State";
-                @ViewData["status"] = null;
+                @ViewData["state"] = "invalid state";
+                @ViewData["status"] = false;
             }
             TempData["state"] = null;
             return Page();

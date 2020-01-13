@@ -150,7 +150,7 @@ namespace SpotifyR
                 {
                     foreach (var album in artistsAlbums)
                     {
-                        if(album.release_date_precision == "day")
+                        if (album.release_date_precision == "day")
                         {
                             DateTime albumDate = DateTime.Parse(album.release_date);
                             TimeSpan ts = DateTime.Now.Subtract(albumDate);
@@ -165,7 +165,7 @@ namespace SpotifyR
                     {
                         foreach (var single in artistsSingles)
                         {
-                            if(single.release_date_precision == "day")
+                            if (single.release_date_precision == "day")
                             {
                                 DateTime singleDate = DateTime.Parse(single.release_date);
                                 TimeSpan ts = DateTime.Now.Subtract(singleDate);
@@ -174,8 +174,6 @@ namespace SpotifyR
                             }
                         }
                     }
-                    // TODO feats???
-                    // TODO compilations??
                 }
             }
             return resultList;

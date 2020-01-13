@@ -1,24 +1,31 @@
 ﻿@page
 @model SpotifyR.CallbackModel
-<main class="no-scroll">
-    <div class="v-align">
-        <div class="callback-redirect font-white">
-            <span class="font-heading font-medium">@ViewData["state"]</span>
-        </div>
-    </div>
-</main>
-<script>
-    $(document).ready(function () {
-
+<div id="left" class="section">
+   <h2 id="state-h" class="abloh">@ViewData["state"]</h2>
+</div>
+<div id="right" class="section">
+    <h3 id="action-h" class="abloh">redirecting</h3>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $("#action-h").addClass("load");
             var url = new URL(window.location.href);
             var status = '@ViewData["status"]';
-            if (status == 'ok'){
+            /*if (status){
                 var code = url.searchParams.get("code");
-                window.location.href = 'Dashboard?code=' + code;
+                setTimeout(function () {
+                    window.location.href = 'Dashboard?code=' + code;
+                }, 1500)
+
             } else {
                 setTimeout(function () {
                     window.location.href = '/';
-                },1500)
-            }
-    });
-</script>
+                }, 1500)
+            }*/
+        });
+    </script>
+}
+@section styles{
+    <link rel="stylesheet" href="~/callback.css" />
+}

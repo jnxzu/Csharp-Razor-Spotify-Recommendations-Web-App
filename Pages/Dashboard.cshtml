@@ -1,18 +1,14 @@
 @page
 @model SpotifyR.DashboardModel
 <header>
-    <div class="header-selection-container">
-        <ul class="header-selection-list font-big font-heading">
-            <li class="selected"><span class="tab">NEWEST RELEASES</span></li>
-            <li><span class="tab">RECOMMENDATIONS</span></li>
-        </ul>
-    </div>
+    <span></span>
+    <img src="img/logo.png">
+    <span></span>
 </header>
 <main>
-    <dl id="new">
+    <div id="grid-container">
         @foreach (var track in Model.NEW_RELEASES){
-            <dt class="font-heading font-big font-green">@track.artists[0].name - @track.name</dt>
-            <dd class="font-content font-medium font-white">#player #track.album.name #duration</dd>
+            <div>track.name</div>
         }
-    </dl>
+    </div>
 </main>

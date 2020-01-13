@@ -1,0 +1,21 @@
+#left {
+  background: var(--darker);
+  color: var(--green);
+}
+#right {
+  background: var(--green);
+  color: var(--darker);
+}
+#state-h {
+  top: 30%;
+  left: 42%;
+}
+#action-h {
+  opacity: 0;
+  top: 42%;
+  left: 30%;
+  transition: 0.8s ease;
+}
+#action-h.load {
+  opacity: 1;
+}
