@@ -1,23 +1,10 @@
-.abloh {
-  position: relative;
-  word-wrap: break-word;
-  z-index: 1;
+#left {
+  background: var(--green);
+  color: var(--darker);
 }
-h1 {
-  font-weight: 900;
-  font-size: 5em;
-}
-h2 {
-  font-weight: 100;
-  font-size: 2em;
-}
-h3 {
-  font-weight: 100;
-  font-size: 1em;
-}
-p {
-  font-weight: 100;
-  font-size: 0.9em;
+#right {
+  background: var(--darker);
+  color: var(--green);
 }
 .nonsense-number {
   font-weight: 900;

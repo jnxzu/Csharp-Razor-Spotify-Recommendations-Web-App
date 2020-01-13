@@ -14,15 +14,28 @@ body {
   height: 100vh;
   overflow: hidden;
 }
-#left {
-  background: var(--green);
-  color: var(--darker);
-}
-#right {
-  background: var(--darker);
-  color: var(--green);
-}
 .section {
   flex: 50%;
   height: 100%;
+}
+h1 {
+  font-weight: 900;
+  font-size: 5em;
+}
+h2 {
+  font-weight: 100;
+  font-size: 2em;
+}
+h3 {
+  font-weight: 100;
+  font-size: 1em;
+}
+p {
+  font-weight: 100;
+  font-size: 0.9em;
+}
+.abloh {
+  position: relative;
+  word-wrap: break-word;
+  z-index: 1;
 }
