@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace SpotifyR
 {
@@ -143,12 +144,12 @@ namespace SpotifyR
         public List<Album> GetNewReleases(String access_token, List<Artist> artists)
         {
             var resultList = new List<Album>();
-            foreach (var artist in artists)
+            Parallel.ForEach (artists, (artist) =>
             {
                 var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
                 if (artistsAlbums != null)
                 {
-                    foreach (var album in artistsAlbums)
+                    Parallel.ForEach (artistsAlbums, (album) =>
                     {
                         if (album.release_date_precision == "day")
                         {
@@ -157,13 +158,13 @@ namespace SpotifyR
                             if (ts.TotalDays < 30)
                                 resultList.Add(album);
                         }
-                    }
+                    });
 
                     var artistsSingles = GetArtistsSingles(access_token, artist.id).items;
 
                     if (artistsSingles != null)
                     {
-                        foreach (var single in artistsSingles)
+                        Parallel.ForEach (artistsSingles, (single) =>
                         {
                             if (single.release_date_precision == "day")
                             {
@@ -172,12 +173,13 @@ namespace SpotifyR
                                 if (ts.TotalDays < 30)
                                     resultList.Add(single);
                             }
-                        }
+                        });
                     }
                 }
-            }
+            });
             return resultList;
         }
+
 
         public List<Track> GetPopularSongs(String access_token, List<Album> albums)
         {

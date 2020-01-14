@@ -12,7 +12,7 @@
             $("#action-h").addClass("load");
             var url = new URL(window.location.href);
             var status = '@ViewData["status"]';
-            /*if (status){
+            if (status){
                 var code = url.searchParams.get("code");
                 setTimeout(function () {
                     window.location.href = 'Dashboard?code=' + code;
@@ -22,7 +22,7 @@
                 setTimeout(function () {
                     window.location.href = '/';
                 }, 1500)
-            }*/
+            }
         });
     </script>
 }
