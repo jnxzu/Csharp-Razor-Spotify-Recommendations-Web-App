@@ -148,12 +148,12 @@ namespace SpotifyR
 
             var results = new ConcurrentBag<Album>();
 
-            foreach(Artist artist in artists)
+            Parallel.ForEach (artists, (artist) =>
             {
                 var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
                 if (artistsAlbums != null)
                 {
-                    Parallel.ForEach (artistsAlbums, (album) =>
+                    foreach (Album album in artistsAlbums)
                     {
                         if (album.release_date_precision == "day")
                         {
@@ -162,13 +162,13 @@ namespace SpotifyR
                             if (ts.TotalDays < 1000)
                                 results.Add(album);
                         }
-                    });
+                    }
 
                     var artistsSingles = GetArtistsSingles(access_token, artist.id).items;
 
                     if (artistsSingles != null)
                     {
-                        Parallel.ForEach (artistsSingles, (single) =>
+                        foreach (Album single in artistsSingles)
                         {
                             if (single.release_date_precision == "day")
                             {
@@ -177,10 +177,10 @@ namespace SpotifyR
                                 if (ts.TotalDays < 1000)
                                     results.Add(single);
                             }
-                        });
+                        }
                     }
                 }
-            }
+            });
 
             resultList = results.ToList();
             return resultList;
