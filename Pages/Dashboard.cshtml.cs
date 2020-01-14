@@ -156,7 +156,9 @@ namespace SpotifyR
                             DateTime albumDate = DateTime.Parse(album.release_date);
                             TimeSpan ts = DateTime.Now.Subtract(albumDate);
                             if (ts.TotalDays < 30)
-                                resultList.Add(album);
+                                lock (resultList) 
+                                    resultList.Add(album);
+
                         }
                     });
 
@@ -171,7 +173,8 @@ namespace SpotifyR
                                 DateTime singleDate = DateTime.Parse(single.release_date);
                                 TimeSpan ts = DateTime.Now.Subtract(singleDate);
                                 if (ts.TotalDays < 30)
-                                    resultList.Add(single);
+                                    lock (resultList)
+                                        resultList.Add(single);
                             }
                         });
                     }
