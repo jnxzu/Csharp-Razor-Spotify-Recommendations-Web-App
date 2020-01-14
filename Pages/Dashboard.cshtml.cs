@@ -105,6 +105,7 @@ namespace SpotifyR
         {
             var access_token = GetTokens(code).access_token;
             NEW_RELEASES = NewReleases(access_token);
+            RECOMM = RecomReleases(access_token);
             return Page();
         }
 
@@ -175,6 +176,33 @@ namespace SpotifyR
                         }
                     }
                 }
+            }
+            return resultList;
+        }
+
+        public List<Track> RecomReleases(String access_token) {
+            var followedArtists = GetFollowedArtists(access_token, null)[0];
+            var recom = GetSimmilar(access_token, followedArtists);
+            return recom;
+        }
+
+        public List<Track> GetSimmilar(String access_token, List<Artist> artists) {
+            var resultList = new List<Track>();
+            foreach (var artist in artists) {
+                string responseString = "";
+                using (HttpClient client = new HttpClient()) {
+                    var authorization = access_token;
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                    var response = client.GetAsync("https://api.spotify.com/v1/recommendations?seed_artists=" + artist.id);
+                    var responseContent = response.Result.Content;
+                    responseString += responseContent.ReadAsStringAsync().Result;
+                }
+            }
+            recomendedTracks = JsonConvert.DeserializeObject<Track>(responseString, settings).tracks.items;
+            if (recomendedTracks != null) foreach (var single in recomendedTracks) if (single.release_date_precision == "day") {
+                DateTime singleDate = DateTime.Parse(single.release_date);
+                TimeSpan ts = DateTime.Now.Subtract(singleDate);
+                if (ts.TotalDays < 30) resultList.Add(single);
             }
             return resultList;
         }
