@@ -1,0 +1,21 @@
+#left,
+#right {
+  background: var(--darker);
+  display: grid;
+  padding: 1.5vw;
+  grid-template-columns: repeat(2, 22vw);
+  gap: 2vw;
+  grid-auto-rows: 20vh;
+  overflow: auto;
+}
+#hide {
+  background: var(--green);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50vw;
+  height: 100%;
+}
+.grid-block {
+  background: var(--light);
+}
