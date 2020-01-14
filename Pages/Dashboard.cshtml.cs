@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace SpotifyR
 {
@@ -144,6 +145,9 @@ namespace SpotifyR
         public List<Album> GetNewReleases(String access_token, List<Artist> artists)
         {
             var resultList = new List<Album>();
+
+            var results = new ConcurrentBag<Album>();
+
             Parallel.ForEach (artists, (artist) =>
             {
                 var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
@@ -156,8 +160,7 @@ namespace SpotifyR
                             DateTime albumDate = DateTime.Parse(album.release_date);
                             TimeSpan ts = DateTime.Now.Subtract(albumDate);
                             if (ts.TotalDays < 30)
-                                lock (resultList) 
-                                    resultList.Add(album);
+                                results.Add(album);
 
                         }
                     });
@@ -173,13 +176,14 @@ namespace SpotifyR
                                 DateTime singleDate = DateTime.Parse(single.release_date);
                                 TimeSpan ts = DateTime.Now.Subtract(singleDate);
                                 if (ts.TotalDays < 30)
-                                    lock (resultList)
-                                        resultList.Add(single);
+                                    results.Add(single);
                             }
                         });
                     }
                 }
             });
+
+            resultList = results.ToList();
             return resultList;
         }
 
