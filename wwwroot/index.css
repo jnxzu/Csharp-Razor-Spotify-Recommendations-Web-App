@@ -3,7 +3,7 @@
   color: var(--darker);
 }
 #right {
-  background: var(--darker);
+  background: var(--dark);
   color: var(--green);
 }
 .nonsense-number {

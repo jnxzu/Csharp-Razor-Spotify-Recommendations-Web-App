@@ -1,14 +1,91 @@
 @page
 @model SpotifyR.DashboardModel
-<header>
-    <span></span>
-    <img src="img/logo.png">
-    <span></span>
-</header>
-<main>
-    <div id="grid-container">
-        @foreach (var track in Model.NEW_RELEASES){
-            <div>track.name</div>
+<div id="hide">
+
+</div>
+<div id="left" class="section">
+    <div class="grid-left">
+        @for(var i=0;i<Model.NEW_RELEASES.Count;i+=2){
+            var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
+            <div class="grid-block">
+                <div class="grid-block-inside">
+                    <div class="grid-block-additional">
+                        <div class="grid-block-left">
+                            <h5 class="node-icon">&#x266b;</h5>
+                            <h6 class="preview-h">PREVIEW</h6>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe src="https://open.spotify.com/embed/track/@uri" width="300" height="80"
+                            frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                        </div>
+                    </div>
+                    <div class="grid-block-right">
+                        <div class="grid-block-content">
+                            <div class="title-container">
+                                <h5>@Model.NEW_RELEASES[i].name</h5>
+                            </div>
+                            <div class="title-container">
+                                <h6>@Model.NEW_RELEASES[i].artists[0].name</h6>
+                            </div>
+                            <div class="title-container">
+                                <h6>@Model.NEW_RELEASES[i].album.name</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-block-bottom">
+                    <button class="like">&#10003;</button>
+                    <span>r a t e</span>
+                    <button class="hate">&#10007;</button>
+                </div>
+            </div>
         }
     </div>
-</main>
+    <div class="grid-right">
+        @for(var i=1;i<Model.NEW_RELEASES.Count;i+=2){
+            var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
+            <div class="grid-block">
+                <div class="grid-block-inside">
+                    <div class="grid-block-additional">
+                        <div class="grid-block-left">
+                            <h5 class="node-icon">&#x266b;</h5>
+                            <h6 class="preview-h">PREVIEW</h6>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe src="https://open.spotify.com/embed/track/@uri" width="300" height="80"
+                            frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                        </div>
+                    </div>
+                    <div class="grid-block-right">
+                        <div class="grid-block-content">
+                            <div class="title-container">
+                                <h5>@Model.NEW_RELEASES[i].name</h5>
+                            </div>
+                            <div class="title-container">
+                                <h6>@Model.NEW_RELEASES[i].artists[0].name</h6>
+                            </div>
+                            <div class="title-container">
+                                <h6>@Model.NEW_RELEASES[i].album.name</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-block-bottom">
+                    <button class="like">&#10003;</button>
+                    <span>r a t e</span>
+                    <button class="hate">&#10007;</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div id="right" class="section">
+    <div class="grid-left">
+    </div>
+    <div class="grid-right">
+    </div>
+</div>
+
+@section styles{
+    <link rel="stylesheet" href="~/dashboard.css" />
+}

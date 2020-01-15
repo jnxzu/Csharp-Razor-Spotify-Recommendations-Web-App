@@ -1,21 +1,147 @@
 #left,
 #right {
-  background: var(--darker);
+  background: var(--dark);
   display: grid;
-  padding: 1.5vw;
-  grid-template-columns: repeat(2, 22vw);
-  gap: 2vw;
-  grid-auto-rows: 20vh;
+  padding: 2vw;
+  grid-template-columns: repeat(2, 380px);
+  gap: 5vw;
   overflow: auto;
 }
 #hide {
   background: var(--green);
   position: absolute;
   top: 0;
-  left: 0;
-  width: 50vw;
+  left: 49%;
+  width: 51vw;
   height: 100%;
 }
 .grid-block {
-  background: var(--light);
+  background: var(--green);
+  height: 110px;
+  margin-bottom: 5vw;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 8px 16px -8px rgba(0, 0, 0, 1);
+  border-radius: 6px;
+}
+.grid-block-inside {
+  height: 80px;
+}
+.grid-block-bottom {
+  background: var(--darker);
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+}
+.grid-block-bottom span {
+  color: rgba(255, 255, 255, 0.7);
+}
+.grid-block-additional {
+  height: 80px;
+  position: absolute;
+  width: 80px;
+  transition: 0.4s;
+  overflow: hidden;
+  z-index: 2;
+}
+.grid-block-left {
+  height: 80px;
+  width: 80px;
+  position: relative;
+  float: left;
+  text-align: center;
+}
+.iframe-container {
+  float: left;
+  position: absolute;
+  left: 80px;
+  width: 300px;
+  height: 80px;
+  background: var(--dark);
+}
+.grid-block-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  height: 80px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+.grid-block-content {
+  height: 80px;
+  padding: 5px;
+  overflow: hidden;
+}
+.grid-block-bottom:hover button {
+  opacity: 100%;
+  visibility: visible;
+}
+.grid-block-bottom span {
+  cursor: default;
+}
+.like,
+.hate {
+  border: none;
+  width: 50px;
+  height: 100%;
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+  transition: 1s ease;
+}
+.like {
+  background: #39a05d;
+}
+.hate {
+  background: #b92a1d;
+}
+.grid-block-additional:hover {
+  width: 100%;
+  border-radius: 0 5px 5px 0;
+}
+.grid-block-additional:hover .node-icon {
+  top: 24%;
+}
+.grid-block-additional:hover .preview-h {
+  top: 22%;
+}
+.title-container {
+  width: 300px;
+  overflow: clip;
+}
+h5,
+h6 {
+  white-space: nowrap;
+  margin: 0;
+  margin-bottom: 6px;
+  transform: translateX(0);
+  transition: 4s ease;
+}
+h5 {
+  font-size: 1em;
+  font-weight: 900;
+}
+h6 {
+  font-size: 0.8em;
+  font-weight: 100;
+}
+.scrollable:hover h5,
+.scrollable:hover h6 {
+  transform: translateX(-500px);
+}
+.node-icon {
+  position: relative;
+  top: 18%;
+  transition: 1s ease;
+}
+.preview-h {
+  position: relative;
+  top: 30%;
+  transition: 1s ease;
+}
+.grid-right {
+  margin-top: 5vw;
 }
