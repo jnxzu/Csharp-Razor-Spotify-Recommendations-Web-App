@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -24,6 +26,45 @@ namespace SpotifyR
             NullValueHandling = NullValueHandling.Ignore
         };
 
+        public IActionResult OnGet(String code)
+        {
+            var access_token = GetTokens(code).access_token;
+            NEW_RELEASES = NewReleases(access_token);
+            // RECOMM = RecomReleases(access_token);
+            return Page();
+        }
+
+        public List<Track> NewReleases(String access_token)
+        {
+            var followedArtists = GetFollowedArtists(access_token, null);
+            var newestAlbums = GetNewReleases(access_token, followedArtists);
+            var newSongs = GetPopularSongs(access_token, newestAlbums);
+            // remove duplicates
+            // shuffle
+            return newSongs;
+        }
+
+        public List<Track> Discover(String access_token)
+        {
+            //TODO
+            return null;
+        }
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //                                                                                                           //
+        //                                                                                                           //
+        //                                                                                                           //
+        //                                                                                                           //
+        //                                              REQUESTY ITD                                                 //
+        //                                                                                                           //
+        //                                                                                                           //
+        //                                                                                                           //
+        //                                                                                                           //
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
         public TokensResponse GetTokens(string code)
         {
             string responseString;
@@ -42,6 +83,7 @@ namespace SpotifyR
             }
             return JsonConvert.DeserializeObject<TokensResponse>(responseString, settings);
         }
+
         public Track GetTrackById(string access_token, string tID)
         {
             string responseString = "";
@@ -101,24 +143,6 @@ namespace SpotifyR
             return JsonConvert.DeserializeObject<Album>(responseString, settings);
         }
 
-        public IActionResult OnGet(String code)
-        {
-            var access_token = GetTokens(code).access_token;
-            NEW_RELEASES = NewReleases(access_token);
-            RECOMM = RecomReleases(access_token);
-            return Page();
-        }
-
-        public List<Track> NewReleases(String access_token)
-        {
-            var followedArtists = GetFollowedArtists(access_token, null);
-            var newestAlbums = GetNewReleases(access_token, followedArtists);
-            var newSongs = GetPopularSongs(access_token, newestAlbums);
-            // remove duplicates
-            // shuffle
-            return newSongs;
-        }
-
         public List<Artist> GetFollowedArtists(String access_token, String next)
         {
             string responseString;
@@ -144,66 +168,43 @@ namespace SpotifyR
         public List<Album> GetNewReleases(String access_token, List<Artist> artists)
         {
             var resultList = new List<Album>();
-            foreach (var artist in artists)
-            {
-                var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
-                if (artistsAlbums != null)
-                {
-                    foreach (var album in artistsAlbums)
-                    {
-                        if (album.release_date_precision == "day")
-                        {
-                            DateTime albumDate = DateTime.Parse(album.release_date);
-                            TimeSpan ts = DateTime.Now.Subtract(albumDate);
-                            if (ts.TotalDays < 30)
-                                resultList.Add(album);
-                        }
-                    }
 
-                    var artistsSingles = GetArtistsSingles(access_token, artist.id).items;
+            var results = new ConcurrentBag<Album>();
 
-                    if (artistsSingles != null)
-                    {
-                        foreach (var single in artistsSingles)
-                        {
-                            if (single.release_date_precision == "day")
-                            {
-                                DateTime singleDate = DateTime.Parse(single.release_date);
-                                TimeSpan ts = DateTime.Now.Subtract(singleDate);
-                                if (ts.TotalDays < 30)
-                                    resultList.Add(single);
-                            }
-                        }
-                    }
-                }
-            }
-            return resultList;
-        }
+            Parallel.ForEach(artists, (artist) =>
+           {
+               var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
+               if (artistsAlbums != null)
+               {
+                   foreach (Album album in artistsAlbums)
+                   {
+                       if (album.release_date_precision == "day")
+                       {
+                           DateTime albumDate = DateTime.Parse(album.release_date);
+                           TimeSpan ts = DateTime.Now.Subtract(albumDate);
+                           if (ts.TotalDays < 30)
+                               results.Add(album);
+                       }
+                   }
 
-        public List<Track> RecomReleases(String access_token) {
-            var followedArtists = GetFollowedArtists(access_token, null)[0];
-            var recom = GetSimmilar(access_token, followedArtists);
-            return recom;
-        }
+                   var artistsSingles = GetArtistsSingles(access_token, artist.id).items;
 
-        public List<Track> GetSimmilar(String access_token, List<Artist> artists) {
-            var resultList = new List<Track>();
-            foreach (var artist in artists) {
-                string responseString = "";
-                using (HttpClient client = new HttpClient()) {
-                    var authorization = access_token;
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
-                    var response = client.GetAsync("https://api.spotify.com/v1/recommendations?seed_artists=" + artist.id);
-                    var responseContent = response.Result.Content;
-                    responseString += responseContent.ReadAsStringAsync().Result;
-                }
-            }
-            recomendedTracks = JsonConvert.DeserializeObject<Track>(responseString, settings).tracks.items;
-            if (recomendedTracks != null) foreach (var single in recomendedTracks) if (single.release_date_precision == "day") {
-                DateTime singleDate = DateTime.Parse(single.release_date);
-                TimeSpan ts = DateTime.Now.Subtract(singleDate);
-                if (ts.TotalDays < 30) resultList.Add(single);
-            }
+                   if (artistsSingles != null)
+                   {
+                       foreach (Album single in artistsSingles)
+                       {
+                           if (single.release_date_precision == "day")
+                           {
+                               DateTime singleDate = DateTime.Parse(single.release_date);
+                               TimeSpan ts = DateTime.Now.Subtract(singleDate);
+                               if (ts.TotalDays < 30)
+                                   results.Add(single);
+                           }
+                       }
+                   }
+               }
+           });
+            resultList = results.ToList();
             return resultList;
         }
 
@@ -218,11 +219,42 @@ namespace SpotifyR
                     var albumTracks = albumSpecific.tracks.items.ToList();
                     albumTracks.Sort((p, q) => p.popularity.CompareTo(q.popularity));
                     var returnSize = albumTracks.Count * 0.15;
-                    returnSize = returnSize < 1 ? 1 : returnSize;
-                    for (var i = 0; i < returnSize; i++) resultList.Add(albumTracks[i]);
+                    returnSize = returnSize <= 1 ? 1 : 2;
+                    for (var i = 0; i < returnSize; i++)
+                    {
+                        albumTracks[i].album = album;
+                        resultList.Add(albumTracks[i]);
+                    }
                 }
             }
             return resultList;
         }
+
+        public List<Track> RecomReleases(String access_token)
+        {
+            var followedArtists = GetFollowedArtists(access_token, null);
+            var recom = GetSimmilar(access_token, followedArtists);
+            return recom;
+        }
+
+        public List<Track> GetSimmilar(String access_token, List<Artist> artists)
+        {
+            var resultList = new List<Track>();
+            string responseString = "";
+            foreach (var artist in artists)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    var authorization = access_token;
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                    var response = client.GetAsync("https://api.spotify.com/v1/recommendations?seed_artists=" + artist.id);
+                    var responseContent = response.Result.Content;
+                    responseString += responseContent.ReadAsStringAsync().Result;
+                }
+            }
+            resultList = JsonConvert.DeserializeObject<Recommendations>(responseString, settings).tracks.ToList();
+            return resultList;
+        }
+
     }
 }
