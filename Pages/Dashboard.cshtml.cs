@@ -17,7 +17,7 @@ namespace SpotifyR
         public List<Track> NEW_RELEASES { get; set; }
 
         [BindProperty]
-        public List<Track> DISCOVER { get; set; }
+        public List<Track> RECOMM { get; set; }
         private SpotifyAuth sAuth = new SpotifyAuth();
 
         JsonSerializerSettings settings = new JsonSerializerSettings()

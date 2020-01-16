@@ -45,3 +45,12 @@ p {
   word-wrap: break-word;
   z-index: 1;
 }
+.nonsense-number {
+  font-weight: 900;
+  font-size: 2em;
+  opacity: 0;
+  transition: 0.8s ease;
+}
+.nonsense-number.load {
+  opacity: 1;
+}

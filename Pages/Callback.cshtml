@@ -25,18 +25,18 @@
 @section scripts{
     <script>
         $(document).ready(function() {
-        //$(".abloh").addClass("load");
-        var url = new URL(window.location.href);
-        var status = '@ViewData["status"]';
-        setTimeout(function() {
-            if (status == "True") {
-                var code = url.searchParams.get("code");
-                window.location.href = "Dashboard?code=" + code;
-            } else {
-                window.location.href = "/";
-            }
-        }, 1500);
-});
+            //$(".abloh").addClass("load");
+            var url = new URL(window.location.href);
+            var status = '@ViewData["status"]';
+            setTimeout(function() {
+                if (status == "True") {
+                    var code = url.searchParams.get("code");
+                    window.location.href = "Dashboard?code=" + code;
+                } else {
+                    window.location.href = "/";
+                }
+            }, 1500);
+        });
     </script>
 }
 @section styles{

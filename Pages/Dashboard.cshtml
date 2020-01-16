@@ -1,9 +1,88 @@
 @page
 @model SpotifyR.DashboardModel
-<div id="hide">
-
+<div id="hide" class="hide-right">
+    <h3 class="abloh" id="dash-recommend-h">recommendations</h3>
+    <p class="abloh" id="dash-recommend-go">(click me!)</p>
+    <p class="abloh" id="dash-recommend-p">we found <span class="nonsense-number">[numer]</span> songs<br/>
+    you may like<br/>
+    from artists such as <span class="nonsense-number">[artists]</span></p>
+    <h3 class="abloh" id="dash-new-h">new releases</h3>
+    <p class="abloh invis" id="dash-new-go">(click me!)</p>
+    <p class="abloh" id="dash-new-p">here's <span class="nonsense-number">[number]</span> new songs from<br/>
+    your favorite artists<br/>
+    <span class="nonsense-number">[albums]</span> are finally here</p>
 </div>
 <div id="left" class="section">
+    <div class="grid-left">
+        @for(var i=0;i<Model.NEW_RELEASES.Count;i+=2){
+            var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
+            <div class="grid-block">
+                <div class="grid-block-inside">
+                    <div class="grid-block-additional">
+                        <div class="grid-block-left">
+                            <h5 class="node-icon">&#x266b;</h5>
+                            <h6 class="preview-h">PREVIEW</h6>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe src="https://open.spotify.com/embed/track/@uri" width="300" height="80"
+                            frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                        </div>
+                    </div>
+                    <div class="grid-block-right">
+                        <div class="grid-block-content">
+                            <div class="title-container">
+                                <h5>@Model.NEW_RELEASES[i].name</h5>
+                            </div>
+                            <div class="title-container">
+                                <h6>@Model.NEW_RELEASES[i].artists[0].name</h6>
+                            </div>
+                            <div class="title-container">
+                                <h6>@Model.NEW_RELEASES[i].album.name</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-block-bottom">
+                </div>
+            </div>
+        }
+    </div>
+    <div class="grid-right">
+        @for(var i=1;i<Model.NEW_RELEASES.Count;i+=2){
+            var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
+            <div class="grid-block">
+                <div class="grid-block-inside">
+                    <div class="grid-block-additional">
+                        <div class="grid-block-left">
+                            <h5 class="node-icon">&#x266b;</h5>
+                            <h6 class="preview-h">PREVIEW</h6>
+                        </div>
+                        <div class="iframe-container">
+                            <iframe src="https://open.spotify.com/embed/track/@uri" width="300" height="80"
+                            frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                        </div>
+                    </div>
+                    <div class="grid-block-right">
+                        <div class="grid-block-content">
+                            <div class="title-container">
+                                <h5>@Model.NEW_RELEASES[i].name</h5>
+                            </div>
+                            <div class="title-container">
+                                <h6>@Model.NEW_RELEASES[i].artists[0].name</h6>
+                            </div>
+                            <div class="title-container">
+                                <h6>@Model.NEW_RELEASES[i].album.name</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid-block-bottom">
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div id="right" class="section">
     <div class="grid-left">
         @for(var i=0;i<Model.NEW_RELEASES.Count;i+=2){
             var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
@@ -79,13 +158,25 @@
         }
     </div>
 </div>
-<div id="right" class="section">
-    <div class="grid-left">
-    </div>
-    <div class="grid-right">
-    </div>
-</div>
-
 @section styles{
     <link rel="stylesheet" href="~/dashboard.css" />
+}
+@section scripts{
+    <script>
+        $(document).ready(function(){
+            $("#hide").find(".nonsense-number").addClass("load");
+            $("#dash-recommend-h").click(function(){
+                $("#dash-new-go").removeClass("invis");
+                $("#dash-recommend-go").addClass("invis");
+                $("#hide").removeClass("hide-right");
+                $("#hide").addClass("hide-left");
+            })
+            $("#dash-new-h").click(function(){
+                $("#dash-recommend-go").removeClass("invis");
+                $("#dash-new-go").addClass("invis");
+                $("#hide").removeClass("hide-left");
+                $("#hide").addClass("hide-right");
+            })
+        });
+    </script>
 }

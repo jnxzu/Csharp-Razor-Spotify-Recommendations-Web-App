@@ -6,15 +6,6 @@
   background: var(--dark);
   color: var(--green);
 }
-.nonsense-number {
-  font-weight: 900;
-  font-size: 2em;
-  opacity: 0;
-  transition: 0.8s ease;
-}
-.nonsense-number.load {
-  opacity: 1;
-}
 #welcome-h {
   top: 12%;
   left: 63%;
