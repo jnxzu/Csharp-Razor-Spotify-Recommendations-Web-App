@@ -39,6 +39,7 @@ namespace SpotifyR
             var followedArtists = GetFollowedArtists(access_token, null);
             var newestAlbums = GetNewReleases(access_token, followedArtists);
             var newSongs = GetPopularSongs(access_token, newestAlbums);
+            var similar = GetSimilar(access_token, followedArtists);
             // remove duplicates
             // shuffle
             return newSongs;
@@ -204,7 +205,9 @@ namespace SpotifyR
                    }
                }
            });
+
             resultList = results.ToList();
+
             return resultList;
         }
 
@@ -233,14 +236,14 @@ namespace SpotifyR
         public List<Track> RecomReleases(String access_token)
         {
             var followedArtists = GetFollowedArtists(access_token, null);
-            var recom = GetSimmilar(access_token, followedArtists);
+            var recom = GetSimilar(access_token, followedArtists);
             return recom;
         }
 
-        public List<Track> GetSimmilar(String access_token, List<Artist> artists)
+        public List<Track> GetSimilar(String access_token, List<Artist> artists)
         {
-            var resultList = new List<Track>();
-            string responseString = "";
+            var results = new List<Track>();
+
             foreach (var artist in artists)
             {
                 using (HttpClient client = new HttpClient())
@@ -249,11 +252,10 @@ namespace SpotifyR
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                     var response = client.GetAsync("https://api.spotify.com/v1/recommendations?seed_artists=" + artist.id);
                     var responseContent = response.Result.Content;
-                    responseString += responseContent.ReadAsStringAsync().Result;
+                    results.AddRange(JsonConvert.DeserializeObject<Recommendations>(responseContent.ReadAsStringAsync().Result, settings).tracks.ToList());  
                 }
             }
-            resultList = JsonConvert.DeserializeObject<Recommendations>(responseString, settings).tracks.ToList();
-            return resultList;
+            return results;
         }
 
     }

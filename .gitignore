@@ -3,4 +3,5 @@ bin/*
 .vscode/*
 appsettings.Development.json
 appsettings.json
-*.csproj
+*.7z
+*.zip
