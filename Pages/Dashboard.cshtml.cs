@@ -31,6 +31,7 @@ namespace SpotifyR
             var access_token = GetTokens(code).access_token;
             NEW_RELEASES = NewReleases(access_token);
             RECOMM = RecomReleases(access_token);
+
             return Page();
         }
 
@@ -251,8 +252,7 @@ namespace SpotifyR
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                     var response = client.GetAsync("https://api.spotify.com/v1/recommendations?seed_artists=" + artist.id);
                     var responseContent = response.Result.Content;
-                    lock(results)
-                        results.AddRange(JsonConvert.DeserializeObject<Recommendations>(responseContent.ReadAsStringAsync().Result, settings).tracks.ToList());  
+                    results.AddRange(JsonConvert.DeserializeObject<Recommendations>(responseContent.ReadAsStringAsync().Result, settings).tracks.ToList());  
                 }
             }
             
