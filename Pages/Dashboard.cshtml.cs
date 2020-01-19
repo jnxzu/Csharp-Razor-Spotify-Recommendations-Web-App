@@ -30,7 +30,7 @@ namespace SpotifyR
         {
             var access_token = GetTokens(code).access_token;
             NEW_RELEASES = NewReleases(access_token);
-            // RECOMM = RecomReleases(access_token);
+            RECOMM = RecomReleases(access_token);
             return Page();
         }
 
@@ -39,7 +39,6 @@ namespace SpotifyR
             var followedArtists = GetFollowedArtists(access_token, null);
             var newestAlbums = GetNewReleases(access_token, followedArtists);
             var newSongs = GetPopularSongs(access_token, newestAlbums);
-            var similar = GetSimilar(access_token, followedArtists);
             // remove duplicates
             // shuffle
             return newSongs;
@@ -244,7 +243,7 @@ namespace SpotifyR
         {
             var results = new List<Track>();
 
-            foreach (var artist in artists)
+            foreach (Artist artist in artists)
             {
                 using (HttpClient client = new HttpClient())
                 {
@@ -252,9 +251,11 @@ namespace SpotifyR
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                     var response = client.GetAsync("https://api.spotify.com/v1/recommendations?seed_artists=" + artist.id);
                     var responseContent = response.Result.Content;
-                    results.AddRange(JsonConvert.DeserializeObject<Recommendations>(responseContent.ReadAsStringAsync().Result, settings).tracks.ToList());  
+                    lock(results)
+                        results.AddRange(JsonConvert.DeserializeObject<Recommendations>(responseContent.ReadAsStringAsync().Result, settings).tracks.ToList());  
                 }
             }
+            
             return results;
         }
 
