@@ -10,6 +10,9 @@ namespace SpotifyR
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
         public bool value { get; set; }
-        public ICollection<UserDB> users { get; set; }
+        public string userId { get; set; }
+        public string artistId { get; set; }
+        public UserDB user { get; set; }
+        public ArtistDB artist { get; set; }
     }
 }

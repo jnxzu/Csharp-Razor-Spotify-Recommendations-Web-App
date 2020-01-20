@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace SpotifyR
 {
     public class ArtistDB
     {        
         [Key]
-        public string id { get; set; }   
-        public string name { get; set; }
-        public string uri { get; set; }
+        public string id { get; set; }  
+        public ICollection<Rating> ratings { get; set; }
+ 
     }
 }
