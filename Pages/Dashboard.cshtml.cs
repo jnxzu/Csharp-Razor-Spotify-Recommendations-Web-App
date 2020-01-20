@@ -32,14 +32,13 @@ namespace SpotifyR
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public IActionResult OnGet(String code)
+        public IActionResult OnGet()
         {
+            string code = (string)@TempData["code"];
             var access_token = GetTokens(code).access_token;
             var followedArtists = GetFollowedArtists(access_token, null);
-            NEW_RELEASES = NewReleases(access_token, followedArtists);
             RECOMM = GetSimilar(access_token, followedArtists);
-            ArtistsNames = ArtistsNames.Remove(ArtistsNames.Length - 2);
-            AlbumsNames = AlbumsNames.Remove(AlbumsNames.Length - 2);
+            NEW_RELEASES = NewReleases(access_token, followedArtists);
             return Page();
         }
 
@@ -161,7 +160,7 @@ namespace SpotifyR
            {
                var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
                if (artistsAlbums != null)
-                {
+               {
                    foreach (Album album in artistsAlbums)
                    {
                        if (album.release_date_precision == "day")
@@ -212,10 +211,18 @@ namespace SpotifyR
                 }
             }
             Random rand = new Random();
-            var chosenAlbums = albums.OrderBy(x => rand.Next()).Take(albums.Count < 3 ? albums.Count : 3).ToList();
-            foreach (var album in chosenAlbums)
+            var chosenAlbums = albums.OrderBy(x => rand.Next()).Where(x => x.album_type != "single").Distinct().Take(albums.Count < 3 ? albums.Count : 3).ToList();
+            for (var i = 0; i < chosenAlbums.Count; i++)
             {
-                AlbumsNames += album.name + ", ";
+                if (i == chosenAlbums.Count - 1)
+                {
+                    AlbumsNames = AlbumsNames.Remove(AlbumsNames.Length - 2);
+                    AlbumsNames += " & " + chosenAlbums[i].name;
+                }
+                else
+                {
+                    AlbumsNames += chosenAlbums[i].name + ", ";
+                }
             }
             return resultList;
         }
@@ -224,7 +231,7 @@ namespace SpotifyR
         {
             var results = new List<Track>();
             Random rand = new Random();
-            var chosenArtists = artists.OrderBy(x => rand.Next()).Take(artists.Count < 5 ? artists.Count : 5).ToList();
+            var chosenArtists = artists.OrderBy(x => rand.Next()).Distinct().Take(artists.Count < 5 ? artists.Count : 5).ToList();
             var seedArtists = "";
             string responseString;
             foreach (var artist in chosenArtists)
@@ -243,11 +250,8 @@ namespace SpotifyR
             }
             var resultTracks = JsonConvert.DeserializeObject<Recommendations>(responseString, settings).tracks;
             results.AddRange(resultTracks.ToList());
-            var chosenResults = results.OrderBy(x => rand.Next()).Take(3).ToList();
-            foreach (var result in chosenResults)
-            {
-                ArtistsNames += result.artists[0].name + ", ";
-            }
+            var chosenResults = results.OrderBy(x => rand.Next()).Select(x => x.artists[0].name).Distinct().Take(3).ToList();
+            ArtistsNames = chosenResults[0] + ", " + chosenResults[1] + " & " + chosenResults[2];
             return results;
         }
     }

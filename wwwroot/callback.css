@@ -1,10 +1,7 @@
-#left {
+#left,
+#right {
   background: var(--dark);
   color: var(--green);
-}
-#right {
-  background: var(--green);
-  color: var(--darker);
 }
 #state1-h {
   top: 27%;
@@ -14,59 +11,16 @@
   top: 34%;
   left: 51%;
 }
-#redirect-h {
-  top: 42%;
-  left: 30%;
+#loader.abloh {
+  top: 45%;
+  left: 45%;
+}
+#what {
+  top: 40%;
+  left: 40%;
+  opacity: 100%;
+  transition: 1s ease;
+}
+#what.invis {
   opacity: 0;
-  transition: 0.8s ease;
-}
-#redirect-h.load {
-  opacity: 1;
-}
-#step1-h {
-  top: 5%;
-  left: 30%;
-}
-#step2-h {
-  top: 13%;
-  left: 58%;
-}
-#step3-h {
-  top: 24%;
-  left: 25%;
-}
-#step4-h {
-  top: 13%;
-  left: 63%;
-}
-#step5-h {
-  top: 24%;
-  left: 19%;
-}
-#step6-h {
-  top: 32%;
-  left: 42%;
-}
-#step7-h {
-  top: 36%;
-  left: 18%;
-}
-#step1-h,
-#step2-h,
-#step3-h,
-#step4-h,
-#step5-h,
-#step6-h,
-#step7-h {
-  opacity: 0;
-  transition: 0.8s ease;
-}
-#step1-h.load,
-#step2-h.load,
-#step3-h.load,
-#step4-h.load,
-#step5-h.load,
-#step6-h.load,
-#step7-h.load {
-  opacity: 1;
 }
