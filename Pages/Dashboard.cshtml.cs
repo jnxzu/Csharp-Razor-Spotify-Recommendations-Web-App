@@ -7,12 +7,16 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
 namespace SpotifyR
 {
+
     public class DashboardModel : PageModel
     {
+        private IMemoryCache _cache { get; set; }
+
         [BindProperty]
         public List<Track> NEW_RELEASES { get; set; }
         [BindProperty]
@@ -32,13 +36,30 @@ namespace SpotifyR
             NullValueHandling = NullValueHandling.Ignore
         };
 
+        public DashboardModel(IMemoryCache cache)
+        {
+            _cache = cache;
+        }
+
         public IActionResult OnGet()
         {
             string code = (string)@TempData["code"];
-            var access_token = GetTokens(code).access_token;
-            var followedArtists = GetFollowedArtists(access_token, null);
-            RECOMM = GetSimilar(access_token, followedArtists);
-            NEW_RELEASES = NewReleases(access_token, followedArtists);
+            var access_token = _cache.GetOrCreate("token", entry =>
+            {
+                return GetTokens(code).access_token;
+            });
+            var followedArtists = _cache.GetOrCreate("artists", entry =>
+            {
+                return GetFollowedArtists(access_token, null);
+            });
+            RECOMM = _cache.GetOrCreate("recomm", entry =>
+            {
+                return GetSimilar(access_token, followedArtists);
+            });
+            NEW_RELEASES = _cache.GetOrCreate("new", entry =>
+            {
+                return NewReleases(access_token, followedArtists);
+            });
             return Page();
         }
 

@@ -162,18 +162,18 @@ h6 {
 #dash-new-h {
   width: 300px;
   cursor: pointer;
-  top: 39%;
+  top: 32%;
   left: 8%;
 }
 #dash-new-p {
   width: 300px;
-  top: 35%;
+  top: 25%;
   left: 3%;
 }
 #dash-new-go {
   width: 300px;
-  top: 35%;
-  left: 30%;
+  top: 29%;
+  left: 22%;
   font-size: 0.6em;
   opacity: 100%;
   transition: 0.5s ease;
