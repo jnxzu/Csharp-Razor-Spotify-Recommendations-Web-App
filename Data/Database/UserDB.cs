@@ -7,7 +7,6 @@ namespace SpotifyR
     {
         [Key]
         public string id { get; set; }
-        public string uri { get; set; }
         public ICollection<Rating> ratings { get; set; }
     }
 }
