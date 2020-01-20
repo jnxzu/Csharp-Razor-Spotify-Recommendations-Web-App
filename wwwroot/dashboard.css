@@ -140,17 +140,18 @@ h6 {
   margin-top: 5vw;
 }
 #dash-recommend-h {
-  cursor: pointer;
   width: 300px;
+  cursor: pointer;
   top: 7%;
   left: 60%;
 }
 #dash-recommend-p {
+  width: 300px;
   top: 1%;
   left: 65%;
-  max-width: 300px;
 }
 #dash-recommend-go {
+  width: 300px;
   top: 3%;
   left: 65%;
   font-size: 0.6em;
@@ -159,23 +160,23 @@ h6 {
   transition: 0.5s ease;
 }
 #dash-new-h {
+  width: 300px;
   cursor: pointer;
-  width: 225px;
-  top: 49%;
+  top: 39%;
   left: 8%;
 }
 #dash-new-p {
-  top: 43%;
-  left: 3%;
   width: 300px;
+  top: 35%;
+  left: 3%;
 }
 #dash-new-go {
-  top: 45%;
+  width: 300px;
+  top: 35%;
   left: 30%;
   font-size: 0.6em;
   opacity: 100%;
   transition: 0.5s ease;
-  width: 100px;
 }
 #dash-recommend-go.invis,
 #dash-new-go.invis {

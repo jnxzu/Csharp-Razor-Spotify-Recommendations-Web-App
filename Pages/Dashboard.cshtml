@@ -2,15 +2,15 @@
 @model SpotifyR.DashboardModel
 <div id="hide" class="hide-right">
     <h3 id="dash-recommend-h" class="abloh">recommendations</h3>
-    <p id="dash-recommend-go" class="abloh">(click me!)</p>
-    <p id="dash-recommend-p" class="abloh">we found <span class="nonsense-number">@Model.RECOMM.Count</span> songs<br/>
+    <h4 id="dash-recommend-go" class="abloh">(click me!)</h4>
+    <h4 id="dash-recommend-p" class="abloh">we found <span class="nonsense-number">@Model.RECOMM.Count</span> songs<br/>
     you may like<br/>
-    from artists such as<br/><span class="nonsense-number">@Model.ArtistsNames</span></p>
+    from artists such as<br/><span class="nonsense-number">@Model.ArtistsNames</span></h4>
     <h3 id="dash-new-h" class="abloh">new releases</h3>
-    <p id="dash-new-go" class="abloh invis">(click me!)</p>
-    <p id="dash-new-p" class="abloh">here's <span class="nonsense-number">@Model.NEW_RELEASES.Count</span> new songs from<br/>
+    <h4 id="dash-new-go" class="abloh invis">(click me!)</h4>
+    <h4 id="dash-new-p" class="abloh">here's <span class="nonsense-number">@Model.NEW_RELEASES.Count</span> new songs from<br/>
     your favorite artists<br/> albums<br/>
-    <span class="nonsense-number">@Model.AlbumsNames</span><br/> are finally here</p>
+    <span class="nonsense-number">@Model.AlbumsNames</span><br/> are finally here</h4>
 </div>
 <div id="left" class="section">
     <div class="grid-left">
@@ -112,13 +112,13 @@
                     </div>
                     <div class="grid-block-right">
                         <div class="grid-block-content">
-                            @if(Model.NEW_RELEASES[i].name.Length > 37){
+                            @if(Model.RECOMM[i].name.Length > 37){
                                 <div class="title-container scrollable">
-                                    <h5>@Model.NEW_RELEASES[i].name</h5>
+                                    <h5>@Model.RECOMM[i].name</h5>
                                 </div>
                             } else {
                                 <div class="title-container">
-                                    <h5>@Model.NEW_RELEASES[i].name</h5>
+                                    <h5>@Model.RECOMM[i].name</h5>
                                 </div>
                             }
                             <div class="title-container">
@@ -155,13 +155,13 @@
                     </div>
                     <div class="grid-block-right">
                         <div class="grid-block-content">
-                            @if(Model.NEW_RELEASES[i].name.Length > 37){
+                            @if(Model.RECOMM[i].name.Length > 37){
                                 <div class="title-container scrollable">
-                                    <h5>@Model.NEW_RELEASES[i].name</h5>
+                                    <h5>@Model.RECOMM[i].name</h5>
                                 </div>
                             } else {
                                 <div class="title-container">
-                                    <h5>@Model.NEW_RELEASES[i].name</h5>
+                                    <h5>@Model.RECOMM[i].name</h5>
                                 </div>
                             }
                             <div class="title-container">

@@ -50,6 +50,8 @@ p {
   font-size: 2em;
   opacity: 0;
   transition: 0.8s ease;
+  display: inline-block;
+  max-width: 300px;
 }
 .nonsense-number.load {
   opacity: 1;
