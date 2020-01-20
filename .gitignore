@@ -5,3 +5,4 @@ appsettings.Development.json
 appsettings.json
 *.7z
 *.zip
+*.csproj

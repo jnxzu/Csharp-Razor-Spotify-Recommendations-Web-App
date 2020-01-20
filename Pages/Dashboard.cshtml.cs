@@ -18,6 +18,13 @@ namespace SpotifyR
 
         [BindProperty]
         public List<Track> RECOMM { get; set; }
+
+        [BindProperty]
+        public String ArtistsNames { get; set; }
+
+        [BindProperty]
+        public String AlbumsNames { get; set; }
+
         private SpotifyAuth sAuth = new SpotifyAuth();
 
         JsonSerializerSettings settings = new JsonSerializerSettings()
@@ -29,26 +36,12 @@ namespace SpotifyR
         public IActionResult OnGet(String code)
         {
             var access_token = GetTokens(code).access_token;
-            NEW_RELEASES = NewReleases(access_token);
-            RECOMM = RecomReleases(access_token);
-
-            return Page();
-        }
-
-        public List<Track> NewReleases(String access_token)
-        {
             var followedArtists = GetFollowedArtists(access_token, null);
-            var newestAlbums = GetNewReleases(access_token, followedArtists);
-            var newSongs = GetPopularSongs(access_token, newestAlbums);
-            // remove duplicates
-            // shuffle
-            return newSongs;
-        }
-
-        public List<Track> Discover(String access_token)
-        {
-            //TODO
-            return null;
+            NEW_RELEASES = NewReleases(access_token, followedArtists);
+            RECOMM = GetSimilar(access_token, followedArtists);
+            ArtistsNames = ArtistsNames.Remove(ArtistsNames.Length - 2);
+            AlbumsNames = AlbumsNames.Remove(AlbumsNames.Length - 2);
+            return Page();
         }
 
 
@@ -63,7 +56,6 @@ namespace SpotifyR
         //                                                                                                           //
         //                                                                                                           //
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
         public TokensResponse GetTokens(string code)
@@ -83,20 +75,6 @@ namespace SpotifyR
                 responseString = responseContent.ReadAsStringAsync().Result;
             }
             return JsonConvert.DeserializeObject<TokensResponse>(responseString, settings);
-        }
-
-        public Track GetTrackById(string access_token, string tID)
-        {
-            string responseString = "";
-            using (HttpClient client = new HttpClient())
-            {
-                var authorization = access_token;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
-                var response = client.GetAsync("https://api.spotify.com/v1/tracks/" + tID);
-                var responseContent = response.Result.Content;
-                responseString += responseContent.ReadAsStringAsync().Result;
-            }
-            return JsonConvert.DeserializeObject<Track>(responseString, settings);
         }
 
         public PagingAlbum GetArtistsAlbums(string access_token, string artistID)
@@ -141,7 +119,8 @@ namespace SpotifyR
                 var responseContent = response.Result.Content;
                 responseString = responseContent.ReadAsStringAsync().Result;
             }
-            return JsonConvert.DeserializeObject<Album>(responseString, settings);
+            var result = JsonConvert.DeserializeObject<Album>(responseString, settings);
+            return result;
         }
 
         public List<Artist> GetFollowedArtists(String access_token, String next)
@@ -166,12 +145,19 @@ namespace SpotifyR
             return resultList;
         }
 
+        public List<Track> NewReleases(String access_token, List<Artist> followedArtists)
+        {
+            var newestAlbums = GetNewReleases(access_token, followedArtists);
+            var newSongs = GetPopularSongs(access_token, newestAlbums);
+            // remove duplicates
+            // shuffle
+            return newSongs;
+        }
+
         public List<Album> GetNewReleases(String access_token, List<Artist> artists)
         {
             var resultList = new List<Album>();
-
             var results = new ConcurrentBag<Album>();
-
             Parallel.ForEach(artists, (artist) =>
            {
                var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
@@ -187,9 +173,7 @@ namespace SpotifyR
                                results.Add(album);
                        }
                    }
-
                    var artistsSingles = GetArtistsSingles(access_token, artist.id).items;
-
                    if (artistsSingles != null)
                    {
                        foreach (Album single in artistsSingles)
@@ -205,9 +189,7 @@ namespace SpotifyR
                    }
                }
            });
-
             resultList = results.ToList();
-
             return resultList;
         }
 
@@ -230,34 +212,44 @@ namespace SpotifyR
                     }
                 }
             }
+            Random rand = new Random();
+            var chosenAlbums = albums.OrderBy(x => rand.Next()).Take(albums.Count < 3 ? albums.Count : 3).ToList();
+            foreach (var album in chosenAlbums)
+            {
+                AlbumsNames += album.name + ", ";
+            }
             return resultList;
-        }
-
-        public List<Track> RecomReleases(String access_token)
-        {
-            var followedArtists = GetFollowedArtists(access_token, null);
-            var recom = GetSimilar(access_token, followedArtists);
-            return recom;
         }
 
         public List<Track> GetSimilar(String access_token, List<Artist> artists)
         {
             var results = new List<Track>();
-
-            foreach (Artist artist in artists)
+            Random rand = new Random();
+            var chosenArtists = artists.OrderBy(x => rand.Next()).Take(artists.Count < 5 ? artists.Count : 5).ToList();
+            var seedArtists = "";
+            string responseString;
+            foreach (var artist in chosenArtists)
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    var authorization = access_token;
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
-                    var response = client.GetAsync("https://api.spotify.com/v1/recommendations?seed_artists=" + artist.id);
-                    var responseContent = response.Result.Content;
-                    results.AddRange(JsonConvert.DeserializeObject<Recommendations>(responseContent.ReadAsStringAsync().Result, settings).tracks.ToList());  
-                }
+                seedArtists += artist.id + ",";
             }
-            
+            seedArtists = seedArtists.Remove(seedArtists.Length - 1);
+            using (HttpClient client = new HttpClient())
+            {
+                var authorization = access_token;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                var url = "https://api.spotify.com/v1/recommendations?limit=" + rand.Next(20, 45) + "&seed_artists=" + seedArtists;
+                var response = client.GetAsync(url);
+                var responseContent = response.Result.Content;
+                responseString = responseContent.ReadAsStringAsync().Result;
+            }
+            var resultTracks = JsonConvert.DeserializeObject<Recommendations>(responseString, settings).tracks;
+            results.AddRange(resultTracks.ToList());
+            var chosenResults = results.OrderBy(x => rand.Next()).Take(3).ToList();
+            foreach (var result in chosenResults)
+            {
+                ArtistsNames += result.artists[0].name + ", ";
+            }
             return results;
         }
-
     }
 }
