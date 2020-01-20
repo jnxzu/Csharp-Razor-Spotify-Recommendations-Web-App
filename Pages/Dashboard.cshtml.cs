@@ -15,7 +15,6 @@ namespace SpotifyR
     {
         [BindProperty]
         public List<Track> NEW_RELEASES { get; set; }
-
         [BindProperty]
         public List<Track> RECOMM { get; set; }
 
@@ -162,7 +161,7 @@ namespace SpotifyR
            {
                var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
                if (artistsAlbums != null)
-               {
+                {
                    foreach (Album album in artistsAlbums)
                    {
                        if (album.release_date_precision == "day")
