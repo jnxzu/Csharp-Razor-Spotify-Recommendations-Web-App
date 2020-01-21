@@ -30,10 +30,10 @@ namespace SpotifyR
         public String AlbumsNames { get; set; }
 
         private SpotifyAuth sAuth = new SpotifyAuth();
-        
-        private User CurrentUser { get; set; }
 
-        private readonly PolecankoDBContext polecankoDBContext;
+        private User _currentUser { get; set; }
+
+        private PolecankoDBContext _polecankoDbContext;
 
         JsonSerializerSettings settings = new JsonSerializerSettings()
         {
@@ -41,8 +41,9 @@ namespace SpotifyR
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public DashboardModel(IMemoryCache cache)
+        public DashboardModel(IMemoryCache cache, PolecankoDBContext polecankoDbContext)
         {
+            _polecankoDbContext = polecankoDbContext;
             _cache = cache;
         }
 
@@ -53,10 +54,7 @@ namespace SpotifyR
             {
                 return GetTokens(code).access_token;
             });
-            var CurrentUser = _cache.GetOrCreate("currentUser", entry =>
-            {
-                return GetUser(access_token);
-            });
+            _currentUser = GetUser(access_token);
             var followedArtists = _cache.GetOrCreate("artists", entry =>
             {
                 return GetFollowedArtists(access_token, null);
@@ -75,6 +73,11 @@ namespace SpotifyR
                 ArtistsNames = _cache.Get<string>("artiststext");
             }
             return Page();
+        }
+
+        public void OnPost(string ArtistId, bool value)
+        {
+            Rate(ArtistId, value);
         }
 
 
@@ -359,27 +362,24 @@ namespace SpotifyR
             return result;
         }
 
-        public void RateArtist(string currentArtistId, bool value)
+        public void Rate(string ArtistId, bool value)
         {
-
-            if (polecankoDBContext.users.Find(CurrentUser.id) == null)
+            if (_polecankoDbContext.users.Find(_currentUser.id) == null)
             {
                 UserDB userDB = new UserDB();
-                userDB.id = CurrentUser.id;
-                polecankoDBContext.users.Add(userDB);
+                userDB.id = _currentUser.id;
+                _polecankoDbContext.users.Add(userDB);
             }
-            if (polecankoDBContext.artists.Find(currentArtistId) == null) 
+            if (_polecankoDbContext.artists.Find(ArtistId) == null)
             {
                 ArtistDB artistDB = new ArtistDB();
-                artistDB.id = currentArtistId;
+                artistDB.id = ArtistId;
             }
-
             Rating rating = new Rating();
-            rating.user = polecankoDBContext.users.Find(CurrentUser.id);
-            rating.artist = polecankoDBContext.artists.Find(CurrentUser.id);
+            rating.user = _polecankoDbContext.users.Find(_currentUser.id);
+            rating.artist = _polecankoDbContext.artists.Find(_currentUser.id);
             rating.value = value;
-
-            polecankoDBContext.Add(rating);
+            _polecankoDbContext.Add(rating);
         }
     }
 }

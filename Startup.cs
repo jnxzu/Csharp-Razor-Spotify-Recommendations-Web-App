@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using SpotifyR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace C__Razor___Polecanko
 {
@@ -19,6 +20,10 @@ namespace C__Razor___Polecanko
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc().AddRazorPagesOptions(o =>
+            {
+                o.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+            });
             services.AddRazorPages();
             services.AddDbContext<PolecankoDBContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));

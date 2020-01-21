@@ -13,11 +13,11 @@
     <span class="nonsense-number">@Model.AlbumsNames</span><br/> are finally here</h4>
 </div>
 <div id="left" class="section">
-    <div class="spinner bar"></div>
     <div class="grid-left invis">
         @for(var i=0;i<Model.NEW_RELEASES.Count;i+=2){
             var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
             <div class="grid-block">
+                <span hidden class="hidden-id">@Model.NEW_RELEASES[i].artists[0].id</span>
                 <div class="grid-block-inside">
                     <div class="grid-block-additional">
                         <div class="grid-block-left">
@@ -58,6 +58,7 @@
         @for(var i=1;i<Model.NEW_RELEASES.Count;i+=2){
             var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
             <div class="grid-block">
+                <span hidden class="hidden-id">@Model.NEW_RELEASES[i].artists[0].id</span>
                 <div class="grid-block-inside">
                     <div class="grid-block-additional">
                         <div class="grid-block-left">
@@ -96,11 +97,11 @@
     </div>
 </div>
 <div id="right" class="section">
-    <div class="spinner bar"></div>
     <div class="grid-left invis">
         @for(var i=0;i<Model.RECOMM.Count;i+=2){
             var uri = Model.RECOMM[i].uri.Remove(0,14);
             <div class="grid-block">
+                <span hidden class="hidden-id">@Model.RECOMM[i].artists[0].id</span>
                 <div class="grid-block-inside">
                     <div class="grid-block-additional">
                         <div class="grid-block-left">
@@ -144,6 +145,7 @@
         @for(var i=1;i<Model.RECOMM.Count;i+=2){
             var uri = Model.RECOMM[i].uri.Remove(0,14);
             <div class="grid-block">
+                <span hidden class="hidden-id">@Model.RECOMM[i].artists[0].id</span>
                 <div class="grid-block-inside">
                     <div class="grid-block-additional">
                         <div class="grid-block-left">
@@ -186,32 +188,52 @@
 </div>
 @section styles{
     <link rel="stylesheet" href="~/dashboard.css" />
-    <link rel="stylesheet" href="~/dashboard_block_anim.css" />
-    <link rel="stylesheet" href="~/dashboard_text_anim.css" />
 }
 @section scripts{
     <script>
         $(document).ready(function(){
-            setTimeout(function (){
-                setTimeout(function (){
-                    $(document).find(".spinner").addClass("invis");
-                }, 1000);
-                $(document).find(".spinner").hide();
-                $(document).find(".grid-right").removeClass("invis");
-                $(document).find(".grid-left").removeClass("invis");
-            }, 1000);
             $("#hide").find(".nonsense-number").addClass("load");
+            $(document).find(".grid-right").removeClass("invis");
+            $(document).find(".grid-left").removeClass("invis");
             $("#dash-recommend-h").click(function(){
                 $("#dash-new-go").removeClass("invis");
                 $("#dash-recommend-go").addClass("invis");
                 $("#hide").removeClass("hide-right");
                 $("#hide").addClass("hide-left");
-            })
+            });
             $("#dash-new-h").click(function(){
                 $("#dash-recommend-go").removeClass("invis");
                 $("#dash-new-go").addClass("invis");
                 $("#hide").removeClass("hide-left");
                 $("#hide").addClass("hide-right");
+            });
+            $(".like").click(function(){
+                $(this).parent().find("span").text("l i k e d");
+                var id = $(this).parent().parent().find(".hidden-id").text();
+                $.ajax({
+                    url: "Dashboard?handler=Rate",
+                    type: "POST",
+                    data: {
+                        ArtistId: id,
+                        value: true
+                    }})
+                .done(function() {
+                    console.log("liked");
+                });
+            });
+            $(".hate").click(function(){
+                $(this).parent().find("span").text("h a t e d");
+                var id = $(this).parent().parent().find(".hidden-id").text();
+                $.ajax({
+                    url: "Dashboard?handler=Rate",
+                    type: "POST",
+                    data: {
+                        ArtistId: id,
+                        value: false
+                    }
+                }).done(function(){
+                    console.log("liked");
+                });
             })
         });
     </script>
