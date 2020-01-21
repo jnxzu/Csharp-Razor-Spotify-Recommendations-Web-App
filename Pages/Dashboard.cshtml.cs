@@ -31,7 +31,7 @@ namespace SpotifyR
 
         private SpotifyAuth sAuth = new SpotifyAuth();
 
-        private User _currentUser { get; set; }
+        private String _accessToken { get; set; }
 
         private PolecankoDBContext _polecankoDbContext;
 
@@ -50,22 +50,21 @@ namespace SpotifyR
         public IActionResult OnGet()
         {
             string code = (string)@TempData["code"];
-            var access_token = _cache.GetOrCreate("token", entry =>
+            _accessToken = _cache.GetOrCreate("token", entry =>
             {
                 return GetTokens(code).access_token;
             });
-            _currentUser = GetUser(access_token);
             var followedArtists = _cache.GetOrCreate("artists", entry =>
             {
-                return GetFollowedArtists(access_token, null);
+                return GetFollowedArtists(_accessToken, null);
             });
             RECOMM = _cache.GetOrCreate("recomm", entry =>
             {
-                return GetSimilar(access_token, followedArtists);
+                return GetSimilar(_accessToken, followedArtists);
             });
             NEW_RELEASES = _cache.GetOrCreate("new", entry =>
             {
-                return NewReleases(access_token, followedArtists);
+                return NewReleases(_accessToken, followedArtists);
             });
             if (AlbumsNames == null)
             {
@@ -77,6 +76,7 @@ namespace SpotifyR
 
         public void OnPost(string ArtistId, bool value)
         {
+            _accessToken = _cache.Get<string>("token");
             Rate(ArtistId, value);
         }
 
@@ -113,13 +113,13 @@ namespace SpotifyR
             return JsonConvert.DeserializeObject<TokensResponse>(responseString, settings);
         }
 
-        public PagingAlbum GetArtistsAlbums(string access_token, string artistID)
+        public PagingAlbum GetArtistsAlbums(string _accessToken, string artistID)
         {
             string responseString;
             using (HttpClient client = new HttpClient())
             {
-                var authorization = access_token;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                var authorization = _accessToken;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
                 String adres = "https://api.spotify.com/v1/artists/" + artistID + "/albums?include_groups=album&limit=1";
                 var response = client.GetAsync(adres);
                 while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
@@ -135,13 +135,13 @@ namespace SpotifyR
             return JsonConvert.DeserializeObject<PagingAlbum>(responseString, settings);
         }
 
-        public PagingAlbum GetArtistsSingles(string access_token, string artistID)
+        public PagingAlbum GetArtistsSingles(string _accessToken, string artistID)
         {
             string responseString;
             using (HttpClient client = new HttpClient())
             {
-                var authorization = access_token;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                var authorization = _accessToken;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
                 String adres = "https://api.spotify.com/v1/artists/" + artistID + "/albums?include_groups=single&limit=2";
                 var response = client.GetAsync(adres);
                 while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
@@ -157,14 +157,14 @@ namespace SpotifyR
             return JsonConvert.DeserializeObject<PagingAlbum>(responseString, settings);
         }
 
-        public List<Artist> GetFollowedArtists(String access_token, String next)
+        public List<Artist> GetFollowedArtists(String _accessToken, String next)
         {
             string responseString;
             List<Artist> resultList = new List<Artist>();
             using (HttpClient client = new HttpClient())
             {
-                var authorization = access_token;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                var authorization = _accessToken;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
                 String adres = next == null ? "https://api.spotify.com/v1/me/following?type=artist&limit=50" : next + "&limit=50";
                 var response = client.GetAsync(adres);
                 while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
@@ -181,26 +181,26 @@ namespace SpotifyR
             resultList.AddRange(responseContainer.items);
             if (responseContainer.next != null)
             {
-                resultList.AddRange(GetFollowedArtists(access_token, responseContainer.next));
+                resultList.AddRange(GetFollowedArtists(_accessToken, responseContainer.next));
             }
             return resultList;
         }
 
-        public List<Track> NewReleases(String access_token, List<Artist> followedArtists)
+        public List<Track> NewReleases(String _accessToken, List<Artist> followedArtists)
         {
-            var newestAlbums = GetNewReleases(access_token, followedArtists);
-            var newSongs = GetPopularSongs(access_token, newestAlbums);
+            var newestAlbums = GetNewReleases(_accessToken, followedArtists);
+            var newSongs = GetPopularSongs(_accessToken, newestAlbums);
             newSongs = newSongs.GroupBy(x => x.name).Select(x => x.First()).OrderBy(x => new Random().Next()).ToList();
             return newSongs;
         }
 
-        public List<Album> GetNewReleases(String access_token, List<Artist> artists)
+        public List<Album> GetNewReleases(String _accessToken, List<Artist> artists)
         {
             var resultList = new List<Album>();
             var results = new ConcurrentBag<Album>();
             Parallel.ForEach(artists, (artist) =>
            {
-               var artistsAlbums = GetArtistsAlbums(access_token, artist.id).items;
+               var artistsAlbums = GetArtistsAlbums(_accessToken, artist.id).items;
                if (artistsAlbums != null)
                {
                    foreach (Album album in artistsAlbums)
@@ -213,7 +213,7 @@ namespace SpotifyR
                                results.Add(album);
                        }
                    }
-                   var artistsSingles = GetArtistsSingles(access_token, artist.id).items;
+                   var artistsSingles = GetArtistsSingles(_accessToken, artist.id).items;
                    if (artistsSingles != null)
                    {
                        foreach (Album single in artistsSingles)
@@ -251,13 +251,13 @@ namespace SpotifyR
             return resultList;
         }
 
-        public AlbumsContainer GetManyAlbums(String access_token, String url)
+        public AlbumsContainer GetManyAlbums(String _accessToken, String url)
         {
             string responseString;
             using (HttpClient client = new HttpClient())
             {
-                var authorization = access_token;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                var authorization = _accessToken;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
                 String adres = "https://api.spotify.com/v1/albums/?ids=" + url;
                 var response = client.GetAsync(adres);
                 while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
@@ -273,7 +273,7 @@ namespace SpotifyR
             return JsonConvert.DeserializeObject<AlbumsContainer>(responseString, settings);
         }
 
-        public List<Track> GetPopularSongs(String access_token, List<Album> albums)
+        public List<Track> GetPopularSongs(String _accessToken, List<Album> albums)
         {
             var resultList = new List<Track>();
             var urls = new String[(int)Math.Ceiling((decimal)albums.Count / 20)];
@@ -290,7 +290,7 @@ namespace SpotifyR
             foreach (var url in urls)
             {
                 var fixUrl = url.Remove(url.Length - 1);
-                var response = GetManyAlbums(access_token, fixUrl);
+                var response = GetManyAlbums(_accessToken, fixUrl);
                 foreach (var album in response.albums)
                 {
                     var albumTracks = album.tracks.items.ToList();
@@ -306,7 +306,7 @@ namespace SpotifyR
             return resultList;
         }
 
-        public List<Track> GetSimilar(String access_token, List<Artist> artists)
+        public List<Track> GetSimilar(String _accessToken, List<Artist> artists)
         {
             var results = new List<Track>();
             Random rand = new Random();
@@ -320,8 +320,8 @@ namespace SpotifyR
             seedArtists = seedArtists.Remove(seedArtists.Length - 1);
             using (HttpClient client = new HttpClient())
             {
-                var authorization = access_token;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                var authorization = _accessToken;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
                 var url = "https://api.spotify.com/v1/recommendations?limit=" + rand.Next(20, 45) + "&seed_artists=" + seedArtists;
                 var response = client.GetAsync(url);
                 while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
@@ -345,29 +345,29 @@ namespace SpotifyR
             return results;
         }
 
-        private User GetUser(string access_token)
+        private User GetUser(string _accessToken)
         {
             var result = new User();
 
             using (HttpClient client = new HttpClient())
             {
-                var authorization = access_token;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                var authorization = _accessToken;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
                 var url = "https://api.spotify.com/v1/me";
                 var response = client.GetAsync(url);
                 var responseContent = response.Result.Content;
                 result = JsonConvert.DeserializeObject<User>(responseContent.ReadAsStringAsync().Result, settings);
             }
-
             return result;
         }
 
         public void Rate(string ArtistId, bool value)
         {
-            if (_polecankoDbContext.users.Find(_currentUser.id) == null)
+            var userId = GetUser(_accessToken).id;
+            if (_polecankoDbContext.users.Find(userId) == null)
             {
                 UserDB userDB = new UserDB();
-                userDB.id = _currentUser.id;
+                userDB.id = userId;
                 _polecankoDbContext.users.Add(userDB);
             }
             if (_polecankoDbContext.artists.Find(ArtistId) == null)
@@ -376,8 +376,8 @@ namespace SpotifyR
                 artistDB.id = ArtistId;
             }
             Rating rating = new Rating();
-            rating.user = _polecankoDbContext.users.Find(_currentUser.id);
-            rating.artist = _polecankoDbContext.artists.Find(_currentUser.id);
+            rating.user = _polecankoDbContext.users.Find(userId);
+            rating.artist = _polecankoDbContext.artists.Find(userId);
             rating.value = value;
             _polecankoDbContext.Add(rating);
         }
