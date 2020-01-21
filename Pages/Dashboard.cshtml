@@ -1,19 +1,20 @@
 @page
 @model SpotifyR.DashboardModel
-<div id="hide" class="hide-right">
-    <h3 class="abloh" id="dash-recommend-h">recommendations</h3>
-    <p class="abloh" id="dash-recommend-go">(click me!)</p>
-    <p class="abloh" id="dash-recommend-p">we found <span class="nonsense-number">@Model.RECOMM.Count</span> songs<br/>
+<div id="hide" class="hide-left">
+    <h3 id="dash-recommend-h" class="abloh">recommendations</h3>
+    <h4 id="dash-recommend-go" class="abloh invis">(click me!)</h4>
+    <h4 id="dash-recommend-p" class="abloh">we found <span class="nonsense-number">@Model.RECOMM.Count</span> songs<br/>
     you may like<br/>
-    from artists such as<br/><span class="nonsense-number">@Model.ArtistsNames</span></p>
-    <h3 class="abloh" id="dash-new-h">new releases</h3>
-    <p class="abloh invis" id="dash-new-go">(click me!)</p>
-    <p class="abloh" id="dash-new-p">here's <span class="nonsense-number">@Model.NEW_RELEASES.Count</span> new songs from<br/>
-    your favorite artists<br/>
-    <span class="nonsense-number">@Model.AlbumsNames</span> are finally here</p>
+    from artists such as<br/><span class="nonsense-number">@Model.ArtistsNames</span></h4>
+    <h3 id="dash-new-h" class="abloh">new releases</h3>
+    <h4 id="dash-new-go" class="abloh">(click me!)</h4>
+    <h4 id="dash-new-p" class="abloh">here's <span class="nonsense-number">@Model.NEW_RELEASES.Count</span> new songs from<br/>
+    your favorite artists<br/> albums<br/>
+    <span class="nonsense-number">@Model.AlbumsNames</span><br/> are finally here</h4>
 </div>
 <div id="left" class="section">
-    <div class="grid-left">
+    <div class="spinner bar"></div>
+    <div class="grid-left invis">
         @for(var i=0;i<Model.NEW_RELEASES.Count;i+=2){
             var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
             <div class="grid-block">
@@ -30,9 +31,15 @@
                     </div>
                     <div class="grid-block-right">
                         <div class="grid-block-content">
-                            <div class="title-container">
-                                <h5>@Model.NEW_RELEASES[i].name</h5>
-                            </div>
+                            @if(Model.NEW_RELEASES[i].name.Length > 37){
+                                <div class="title-container scrollable">
+                                    <h5>@Model.NEW_RELEASES[i].name</h5>
+                                </div>
+                            } else {
+                                <div class="title-container">
+                                    <h5>@Model.NEW_RELEASES[i].name</h5>
+                                </div>
+                            }
                             <div class="title-container">
                                 <h6>@Model.NEW_RELEASES[i].artists[0].name</h6>
                             </div>
@@ -47,7 +54,7 @@
             </div>
         }
     </div>
-    <div class="grid-right">
+    <div class="grid-right invis">
         @for(var i=1;i<Model.NEW_RELEASES.Count;i+=2){
             var uri = Model.NEW_RELEASES[i].uri.Remove(0,14);
             <div class="grid-block">
@@ -64,9 +71,15 @@
                     </div>
                     <div class="grid-block-right">
                         <div class="grid-block-content">
-                            <div class="title-container">
-                                <h5>@Model.NEW_RELEASES[i].name</h5>
-                            </div>
+                            @if(Model.NEW_RELEASES[i].name.Length > 37){
+                                <div class="title-container scrollable">
+                                    <h5>@Model.NEW_RELEASES[i].name</h5>
+                                </div>
+                            } else {
+                                <div class="title-container">
+                                    <h5>@Model.NEW_RELEASES[i].name</h5>
+                                </div>
+                            }
                             <div class="title-container">
                                 <h6>@Model.NEW_RELEASES[i].artists[0].name</h6>
                             </div>
@@ -83,7 +96,8 @@
     </div>
 </div>
 <div id="right" class="section">
-    <div class="grid-left">
+    <div class="spinner bar"></div>
+    <div class="grid-left invis">
         @for(var i=0;i<Model.RECOMM.Count;i+=2){
             var uri = Model.RECOMM[i].uri.Remove(0,14);
             <div class="grid-block">
@@ -100,9 +114,15 @@
                     </div>
                     <div class="grid-block-right">
                         <div class="grid-block-content">
-                            <div class="title-container">
-                                <h5>@Model.RECOMM[i].name</h5>
-                            </div>
+                            @if(Model.RECOMM[i].name.Length > 37){
+                                <div class="title-container scrollable">
+                                    <h5>@Model.RECOMM[i].name</h5>
+                                </div>
+                            } else {
+                                <div class="title-container">
+                                    <h5>@Model.RECOMM[i].name</h5>
+                                </div>
+                            }
                             <div class="title-container">
                                 <h6>@Model.RECOMM[i].artists[0].name</h6>
                             </div>
@@ -120,7 +140,7 @@
             </div>
         }
     </div>
-    <div class="grid-right">
+    <div class="grid-right invis">
         @for(var i=1;i<Model.RECOMM.Count;i+=2){
             var uri = Model.RECOMM[i].uri.Remove(0,14);
             <div class="grid-block">
@@ -137,9 +157,15 @@
                     </div>
                     <div class="grid-block-right">
                         <div class="grid-block-content">
-                            <div class="title-container">
-                                <h5>@Model.RECOMM[i].name</h5>
-                            </div>
+                            @if(Model.RECOMM[i].name.Length > 37){
+                                <div class="title-container scrollable">
+                                    <h5>@Model.RECOMM[i].name</h5>
+                                </div>
+                            } else {
+                                <div class="title-container">
+                                    <h5>@Model.RECOMM[i].name</h5>
+                                </div>
+                            }
                             <div class="title-container">
                                 <h6>@Model.RECOMM[i].artists[0].name</h6>
                             </div>
@@ -160,10 +186,20 @@
 </div>
 @section styles{
     <link rel="stylesheet" href="~/dashboard.css" />
+    <link rel="stylesheet" href="~/dashboard_block_anim.css" />
+    <link rel="stylesheet" href="~/dashboard_text_anim.css" />
 }
 @section scripts{
     <script>
         $(document).ready(function(){
+            setTimeout(function (){
+                setTimeout(function (){
+                    $(document).find(".spinner").addClass("invis");
+                }, 1000);
+                $(document).find(".spinner").hide();
+                $(document).find(".grid-right").removeClass("invis");
+                $(document).find(".grid-left").removeClass("invis");
+            }, 1000);
             $("#hide").find(".nonsense-number").addClass("load");
             $("#dash-recommend-h").click(function(){
                 $("#dash-new-go").removeClass("invis");

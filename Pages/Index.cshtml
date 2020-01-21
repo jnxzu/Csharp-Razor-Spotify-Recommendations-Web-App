@@ -3,9 +3,9 @@
 <div id="left" class="section">
     <h3 class="abloh" id="welcome-h">welcome to</h1>
     <h1 class="abloh" id="polecappka-h">" polecappka "</h1>
-    <p class="abloh" id="welcome-p">an innovative Spotify-integrated<br/>music discovery and notification engine<br/>now used by <span id="users-num" class="nonsense-number">@ViewData["users"]</span> users</p>
-    <h4 class="abloh" id="new-h">users have been notified<br/>of <span id="new-num" class="nonsense-number">@ViewData["new"]</span> new releases</h4>
-    <h4 class="abloh" id="discover-h"><span id="discover-num" class="nonsense-number">@ViewData["discover"]</span> new songs<br/>have been discovered</h4>
+    <p class="abloh" id="welcome-p">an innovative Spotify-integrated<br/>music discovery and notification engine<br/>now used by <span id="users-num" class="nonsense-number">@Model.users</span> users</p>
+    <h4 class="abloh" id="new-h">users have been notified<br/>of <span id="new-num" class="nonsense-number">@Model.neww</span> new releases</h4>
+    <h4 class="abloh" id="discover-h"><span id="discover-num" class="nonsense-number">@Model.discover</span> new songs<br/>have been discovered</h4>
 </div>
 <div id="right" class="section">
     <h1 class="abloh" id="authenticate-h">enjoy your music.</h1>
@@ -15,7 +15,7 @@
     <script>
         $(document).ready(function(){
             $("#auth-button").click(function () {
-                var params = '@ViewData["params"]';
+                var params = "@Model.parames";
                 params = params.replace(/&amp;/g, "&");
                 window.location.href = "https://accounts.spotify.com/authorize/".concat(params);
             })

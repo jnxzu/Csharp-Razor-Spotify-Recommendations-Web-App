@@ -1,7 +1,14 @@
 ﻿@page
 @model SpotifyR.CallbackModel
+<div id="hide" class="hide-right">
+    <div id="loader" class="loader abloh">
+        <svg viewBox="0 0 80 80">
+            <circle id="test" cx="40" cy="40" r="32"></circle>
+        </svg>
+    </div>
+</div>
 <div id="left" class="section">
-    @if((bool)@ViewData["status"]){
+    @if(@Model.status){
         <h2 id="state1-h" class="abloh">authentication<br/>successful</h2>
     }
     else{
@@ -9,36 +16,45 @@
     }    
 </div>
 <div id="right" class="section">
-    @if((bool)@ViewData["status"]){
-        <h3 id="step1-h" class="abloh">analysing your spotify library</h3>
-        <h3 id="step2-h" class="abloh">browsing artists</h3>
-        <h3 id="step3-h" class="abloh">exploring albums</h3>
-        <h3 id="step4-h" class="abloh">selecting tracks</h3>
-        <h3 id="step5-h" class="abloh">removing duplicates</h3>
-        <h3 id="step6-h" class="abloh">shuffling</h3>
-        <h3 id="step7-h" class="abloh">generati1ng grid</h3>
-    }
-    else{
-        <h3 id="redirect-h" class="abloh">redirecting</h3>
-    }
+    <h3 id="what" class="abloh"></h3>
 </div>
 @section scripts{
     <script>
         $(document).ready(function() {
-            //$(".abloh").addClass("load");
             var url = new URL(window.location.href);
-            var status = '@ViewData["status"]';
+            var status = "@Model.status";
+            var whatList = ["generating grid","assessing preferences","browsing library","calculating suggestions","calling api","testing tokens","exploring artists","analyzing albums","downloading tracks"];
+            if(status == "False"){
+                $("#what").text("redirecting");
+            } else {
+                $("#what").text(whatList[Math.floor(Math.random()*whatList.length)+1]);
+            }
             setTimeout(function() {
                 if (status == "True") {
-                    var code = url.searchParams.get("code");
-                    window.location.href = "Dashboard?code=" + code;
+                    window.location.href = "Dashboard";
                 } else {
                     window.location.href = "/";
                 }
-            }, 1500);
+            }, 4000);
+            setInterval(function(){
+                swapHide();
+            }, 3000);
+            function swapHide(){
+                if($("#hide").hasClass("hide-right")){
+                    $("#hide").removeClass("hide-right");
+                    $("#hide").addClass("hide-left");
+                    $("#what").text(whatList[Math.floor(Math.random()*whatList.length)+1]);
+                    $("#what").removeClass("invis");
+                } else {
+                    $("#hide").removeClass("hide-left");
+                    $("#hide").addClass("hide-right");
+                    $("#what").addClass("invis");
+                }
+            };
         });
     </script>
 }
 @section styles{
     <link rel="stylesheet" href="~/callback.css" />
+    <link rel="stylesheet" href="~/callback_anim.css" />
 }

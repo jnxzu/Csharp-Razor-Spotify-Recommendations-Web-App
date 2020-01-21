@@ -22,6 +22,7 @@ namespace C__Razor___Polecanko
             services.AddRazorPages();
             services.AddDbContext<PolecankoDBContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -8,23 +8,6 @@
   gap: 5vw;
   overflow: auto;
 }
-#hide {
-  background: var(--green);
-  position: absolute;
-  top: 0;
-  left: 49%;
-  width: 51vw;
-  height: 100%;
-  transition: 1s ease;
-  z-index: 3;
-  cursor: default;
-}
-#hide.hide-right {
-  left: 49%;
-}
-#hide.hide-left {
-  left: 0%;
-}
 .grid-block {
   background: var(--green);
   height: 110px;
@@ -36,10 +19,14 @@
 }
 .grid-block-inside {
   height: 80px;
+  transition: 1s ease;
 }
 .grid-block-bottom {
   background: var(--darker);
   height: 30px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   text-align: center;
   line-height: 30px;
 }
@@ -122,7 +109,6 @@
 }
 .title-container {
   width: 300px;
-  overflow: clip;
 }
 h5,
 h6 {
@@ -142,7 +128,7 @@ h6 {
 }
 .scrollable:hover h5,
 .scrollable:hover h6 {
-  transform: translateX(-500px);
+  transform: translateX(calc(100% - 400px));
 }
 .node-icon {
   position: relative;
@@ -157,18 +143,28 @@ h6 {
 .grid-right {
   margin-top: 5vw;
 }
+.grid-right,
+.grid-left {
+  opacity: 100%;
+  transition: 1s ease;
+}
+.grid-right.invis,
+.grid-left.invis {
+  opacity: 0;
+}
 #dash-recommend-h {
-  cursor: pointer;
   width: 300px;
+  cursor: pointer;
   top: 7%;
   left: 60%;
 }
 #dash-recommend-p {
+  width: 300px;
   top: 1%;
   left: 65%;
-  width: 300px;
 }
 #dash-recommend-go {
+  width: 300px;
   top: 3%;
   left: 65%;
   font-size: 0.6em;
@@ -177,25 +173,28 @@ h6 {
   transition: 0.5s ease;
 }
 #dash-new-h {
+  width: 300px;
   cursor: pointer;
-  width: 225px;
-  top: 49%;
+  top: 32%;
   left: 8%;
 }
 #dash-new-p {
-  top: 43%;
+  width: 500px;
+  top: 25%;
   left: 3%;
-  width: 300px;
 }
 #dash-new-go {
-  top: 45%;
-  left: 30%;
+  width: 300px;
+  top: 29%;
+  left: 22%;
   font-size: 0.6em;
   opacity: 100%;
   transition: 0.5s ease;
-  width: 100px;
 }
 #dash-recommend-go.invis,
 #dash-new-go.invis {
   opacity: 0;
+}
+#dash-new-p .nonsense-number {
+  max-width: 500px;
 }
