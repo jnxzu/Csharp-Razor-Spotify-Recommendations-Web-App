@@ -312,7 +312,7 @@ namespace SpotifyR
             Random rand = new Random();
             List<Rating> ratings = _polecankoDbContext.ratings.ToList();
             var userId = GetUser(_accessToken).id;
-
+            List<ArtistDB> likedArtists = new List<ArtistDB>();
             ratings = ratings.FindAll(r => r.userId == userId);
             if (ratings != null)
             {
@@ -320,13 +320,19 @@ namespace SpotifyR
                 {
                     if (ratings.FirstOrDefault(r => r.artistId == artist.id && r.value == false) != null)
                         artists.Remove(artist);
+                    if (ratings.FirstOrDefault(r => r.artistId == artist.id && r.value == true) != null)
+                        likedArtists.Add(_polecankoDbContext.artists.Find(artist.id));
                 }
             }
             
-            var chosenArtists = artists.OrderBy(x => rand.Next()).Distinct().Take(artists.Count < 5 ? artists.Count : 5).ToList();
+            var chosenArtists = artists.OrderBy(x => rand.Next()).Distinct().Take(artists.Count < 2 ? artists.Count : 2).ToList();
             var seedArtists = "";
             string responseString;
             foreach (var artist in chosenArtists)
+            {
+                seedArtists += artist.id + ",";
+            }
+            foreach (var artist in likedArtists)
             {
                 seedArtists += artist.id + ",";
             }
