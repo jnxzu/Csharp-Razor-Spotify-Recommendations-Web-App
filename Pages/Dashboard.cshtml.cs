@@ -310,6 +310,19 @@ namespace SpotifyR
         {
             var results = new List<Track>();
             Random rand = new Random();
+            List<Rating> ratings = _polecankoDbContext.ratings.ToList();
+            var userId = GetUser(_accessToken).id;
+
+            ratings = ratings.FindAll(r => r.userId == userId);
+            if (ratings != null)
+            {
+                foreach (Artist artist in artists.ToList())
+                {
+                    if (ratings.FirstOrDefault(r => r.artistId == artist.id && r.value == false) != null)
+                        artists.Remove(artist);
+                }
+            }
+            
             var chosenArtists = artists.OrderBy(x => rand.Next()).Distinct().Take(artists.Count < 5 ? artists.Count : 5).ToList();
             var seedArtists = "";
             string responseString;
