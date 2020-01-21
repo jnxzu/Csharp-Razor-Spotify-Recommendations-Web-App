@@ -60,6 +60,11 @@ namespace SpotifyR
             {
                 return NewReleases(access_token, followedArtists);
             });
+            if (AlbumsNames == null)
+            {
+                AlbumsNames = _cache.Get<string>("albumtext");
+                ArtistsNames = _cache.Get<string>("artiststext");
+            }
             return Page();
         }
 
@@ -105,6 +110,13 @@ namespace SpotifyR
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                 String adres = "https://api.spotify.com/v1/artists/" + artistID + "/albums?include_groups=album&limit=1";
                 var response = client.GetAsync(adres);
+                while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
+                {
+                    var timeToWait = response.Result.Headers.RetryAfter.Delta?.Seconds;
+                    Console.WriteLine("too many requests, waiting to retry...");
+                    System.Threading.Thread.Sleep((int)timeToWait * 1000);
+                    response = client.GetAsync(adres);
+                }
                 var responseContent = response.Result.Content;
                 responseString = responseContent.ReadAsStringAsync().Result;
             }
@@ -120,26 +132,17 @@ namespace SpotifyR
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                 String adres = "https://api.spotify.com/v1/artists/" + artistID + "/albums?include_groups=single&limit=2";
                 var response = client.GetAsync(adres);
+                while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
+                {
+                    var timeToWait = response.Result.Headers.RetryAfter.Delta?.Seconds;
+                    Console.WriteLine("too many requests, waiting to retry...");
+                    System.Threading.Thread.Sleep((int)timeToWait * 1000);
+                    response = client.GetAsync(adres);
+                }
                 var responseContent = response.Result.Content;
                 responseString = responseContent.ReadAsStringAsync().Result;
             }
             return JsonConvert.DeserializeObject<PagingAlbum>(responseString, settings);
-        }
-
-        public Album GetAlbumById(string access_token, string albumID)
-        {
-            string responseString;
-            using (HttpClient client = new HttpClient())
-            {
-                var authorization = access_token;
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
-                String adres = "https://api.spotify.com/v1/albums/" + albumID;
-                var response = client.GetAsync(adres);
-                var responseContent = response.Result.Content;
-                responseString = responseContent.ReadAsStringAsync().Result;
-            }
-            var result = JsonConvert.DeserializeObject<Album>(responseString, settings);
-            return result;
         }
 
         public List<Artist> GetFollowedArtists(String access_token, String next)
@@ -152,6 +155,13 @@ namespace SpotifyR
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                 String adres = next == null ? "https://api.spotify.com/v1/me/following?type=artist&limit=50" : next + "&limit=50";
                 var response = client.GetAsync(adres);
+                while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
+                {
+                    var timeToWait = response.Result.Headers.RetryAfter.Delta?.Seconds;
+                    Console.WriteLine("too many requests, waiting to retry...");
+                    System.Threading.Thread.Sleep((int)timeToWait * 1000);
+                    response = client.GetAsync(adres);
+                }
                 var responseContent = response.Result.Content;
                 responseString = responseContent.ReadAsStringAsync().Result;
             }
@@ -168,8 +178,7 @@ namespace SpotifyR
         {
             var newestAlbums = GetNewReleases(access_token, followedArtists);
             var newSongs = GetPopularSongs(access_token, newestAlbums);
-            // remove duplicates
-            // shuffle
+            newSongs = newSongs.GroupBy(x => x.name).Select(x => x.First()).OrderBy(x => new Random().Next()).ToList();
             return newSongs;
         }
 
@@ -209,40 +218,77 @@ namespace SpotifyR
                }
            });
             resultList = results.ToList();
+            _cache.GetOrCreate("albumtext", entry =>
+            {
+                Random rand = new Random();
+                var chosenAlbums = resultList.OrderBy(x => rand.Next()).Where(x => x.album_type != "single").Distinct().Take(resultList.Count < 3 ? resultList.Count : 3).ToList();
+                for (var i = 0; i < chosenAlbums.Count; i++)
+                {
+                    if (i == chosenAlbums.Count - 1)
+                    {
+                        AlbumsNames = AlbumsNames.Remove(AlbumsNames.Length - 2);
+                        AlbumsNames += " & " + chosenAlbums[i].name;
+                    }
+                    else
+                    {
+                        AlbumsNames += chosenAlbums[i].name + ", ";
+                    }
+                }
+                return AlbumsNames;
+            });
             return resultList;
+        }
+
+        public AlbumsContainer GetManyAlbums(String access_token, String url)
+        {
+            string responseString;
+            using (HttpClient client = new HttpClient())
+            {
+                var authorization = access_token;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
+                String adres = "https://api.spotify.com/v1/albums/?ids=" + url;
+                var response = client.GetAsync(adres);
+                while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
+                {
+                    var timeToWait = response.Result.Headers.RetryAfter.Delta?.Seconds;
+                    Console.WriteLine("too many requests, waiting to retry...");
+                    System.Threading.Thread.Sleep((int)timeToWait * 1000);
+                    response = client.GetAsync(adres);
+                }
+                var responseContent = response.Result.Content;
+                responseString = responseContent.ReadAsStringAsync().Result;
+            }
+            return JsonConvert.DeserializeObject<AlbumsContainer>(responseString, settings);
         }
 
         public List<Track> GetPopularSongs(String access_token, List<Album> albums)
         {
             var resultList = new List<Track>();
-            foreach (var album in albums)
+            var urls = new String[(int)Math.Ceiling((decimal)albums.Count / 20)];
+            var i = 0;
+            var j = 0;
+            while (i < albums.Count)
             {
-                var albumSpecific = GetAlbumById(access_token, album.id);
-                if (albumSpecific.id != null)
+                for (j = i; j < (albums.Count < i + 20 ? albums.Count : i + 20); j++)
                 {
-                    var albumTracks = albumSpecific.tracks.items.ToList();
-                    albumTracks.Sort((p, q) => p.popularity.CompareTo(q.popularity));
-                    var returnSize = albumTracks.Count * 0.15;
-                    returnSize = returnSize <= 1 ? 1 : 2;
-                    for (var i = 0; i < returnSize; i++)
-                    {
-                        albumTracks[i].album = album;
-                        resultList.Add(albumTracks[i]);
-                    }
+                    urls[(int)Math.Floor((decimal)j / 20)] += albums[j].id + ",";
                 }
+                i += j;
             }
-            Random rand = new Random();
-            var chosenAlbums = albums.OrderBy(x => rand.Next()).Where(x => x.album_type != "single").Distinct().Take(albums.Count < 3 ? albums.Count : 3).ToList();
-            for (var i = 0; i < chosenAlbums.Count; i++)
+            foreach (var url in urls)
             {
-                if (i == chosenAlbums.Count - 1)
+                var fixUrl = url.Remove(url.Length - 1);
+                var response = GetManyAlbums(access_token, fixUrl);
+                foreach (var album in response.albums)
                 {
-                    AlbumsNames = AlbumsNames.Remove(AlbumsNames.Length - 2);
-                    AlbumsNames += " & " + chosenAlbums[i].name;
-                }
-                else
-                {
-                    AlbumsNames += chosenAlbums[i].name + ", ";
+                    var albumTracks = album.tracks.items.ToList();
+                    albumTracks.Sort((p, q) => p.popularity.CompareTo(q.popularity));
+                    var returnSize = albumTracks.Count * 0.15 <= 1 ? 1 : 2;
+                    for (var k = 0; k < returnSize; k++)
+                    {
+                        albumTracks[k].album = album;
+                        resultList.Add(albumTracks[k]);
+                    }
                 }
             }
             return resultList;
@@ -266,13 +312,24 @@ namespace SpotifyR
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", access_token);
                 var url = "https://api.spotify.com/v1/recommendations?limit=" + rand.Next(20, 45) + "&seed_artists=" + seedArtists;
                 var response = client.GetAsync(url);
+                while (response.Result.StatusCode.ToString().Equals("TooManyRequests"))
+                {
+                    var timeToWait = response.Result.Headers.RetryAfter.Delta?.Seconds;
+                    Console.WriteLine("too many requests, waiting to retry...");
+                    System.Threading.Thread.Sleep((int)timeToWait * 1000);
+                    response = client.GetAsync(url);
+                }
                 var responseContent = response.Result.Content;
                 responseString = responseContent.ReadAsStringAsync().Result;
             }
             var resultTracks = JsonConvert.DeserializeObject<Recommendations>(responseString, settings).tracks;
             results.AddRange(resultTracks.ToList());
-            var chosenResults = results.OrderBy(x => rand.Next()).Select(x => x.artists[0].name).Distinct().Take(3).ToList();
-            ArtistsNames = chosenResults[0] + ", " + chosenResults[1] + " & " + chosenResults[2];
+            _cache.GetOrCreate("artiststext", entry =>
+            {
+                var chosenResults = results.OrderBy(x => rand.Next()).Select(x => x.artists[0].name).Distinct().Take(3).ToList();
+                ArtistsNames = chosenResults[0] + ", " + chosenResults[1] + " & " + chosenResults[2];
+                return ArtistsNames;
+            });
             return results;
         }
     }

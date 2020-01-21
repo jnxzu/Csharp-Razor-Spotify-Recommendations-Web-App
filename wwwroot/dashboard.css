@@ -19,10 +19,14 @@
 }
 .grid-block-inside {
   height: 80px;
+  transition: 1s ease;
 }
 .grid-block-bottom {
   background: var(--darker);
   height: 30px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   text-align: center;
   line-height: 30px;
 }
@@ -139,6 +143,15 @@ h6 {
 .grid-right {
   margin-top: 5vw;
 }
+.grid-right,
+.grid-left {
+  opacity: 100%;
+  transition: 1s ease;
+}
+.grid-right.invis,
+.grid-left.invis {
+  opacity: 0;
+}
 #dash-recommend-h {
   width: 300px;
   cursor: pointer;
@@ -166,7 +179,7 @@ h6 {
   left: 8%;
 }
 #dash-new-p {
-  width: 300px;
+  width: 500px;
   top: 25%;
   left: 3%;
 }
@@ -181,4 +194,7 @@ h6 {
 #dash-recommend-go.invis,
 #dash-new-go.invis {
   opacity: 0;
+}
+#dash-new-p .nonsense-number {
+  max-width: 500px;
 }
