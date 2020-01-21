@@ -362,7 +362,7 @@ namespace SpotifyR
             return result;
         }
 
-        public void Rate(string ArtistId, bool value)
+        public void Rate(string artistId, bool value)
         {
             if (_polecankoDbContext.users.Find(_currentUser.id) == null)
             {
@@ -370,16 +370,17 @@ namespace SpotifyR
                 userDB.id = _currentUser.id;
                 _polecankoDbContext.users.Add(userDB);
             }
-            if (_polecankoDbContext.artists.Find(ArtistId) == null)
+            if (_polecankoDbContext.artists.Find(artistId) == null)
             {
                 ArtistDB artistDB = new ArtistDB();
-                artistDB.id = ArtistId;
+                artistDB.id = artistId;
             }
             Rating rating = new Rating();
             rating.user = _polecankoDbContext.users.Find(_currentUser.id);
             rating.artist = _polecankoDbContext.artists.Find(_currentUser.id);
             rating.value = value;
-            _polecankoDbContext.Add(rating);
+            if (_polecankoDbContext.ratings.Find(rating) == null)
+                _polecankoDbContext.Add(rating);
         }
     }
 }
