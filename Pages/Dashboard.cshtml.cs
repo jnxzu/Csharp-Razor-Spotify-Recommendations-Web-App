@@ -376,10 +376,10 @@ namespace SpotifyR
                 artistDB.id = artistId;
             }
             Rating rating = new Rating();
-            rating.user = _polecankoDbContext.users.Find(userId);
-            rating.artist = _polecankoDbContext.artists.Find(userId);
+            rating.userId = userId;
+            rating.artistId = artistId;
             rating.value = value;
-            if (_polecankoDbContext.ratings.Find(rating) == null)
+            if (_polecankoDbContext.ratings.SingleOrDefault(rating => rating.artistId == artistId && rating.userId == userId) == null)
                 _polecankoDbContext.Add(rating);
         }
     }
