@@ -26,7 +26,7 @@ namespace C__Razor___Polecanko
             });
             services.AddRazorPages();
             services.AddDbContext<PolecankoDBContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite(Configuration.GetConnectionString("PolecappkaDbContext")));
             services.AddMemoryCache();
         }
 
