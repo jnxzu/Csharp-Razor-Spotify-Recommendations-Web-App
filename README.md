@@ -1,2 +1,2 @@
-# Spotify Recommendation Web Application
-Web Application for suggesting music on Spotify via the Spotify Web API using .NET Razor Pages.
+# C# Razor Spotify Recommendations
+Simple web application using the Spotify API for music recommendation. Built with .NET Razor Pages.
