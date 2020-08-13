@@ -277,15 +277,9 @@ namespace SpotifyR
         {
             var resultList = new List<Track>();
             var urls = new String[(int)Math.Ceiling((decimal)albums.Count / 20)];
-            var i = 0;
-            var j = 0;
-            while (i < albums.Count)
+            for (var i = 0; i < albums.Count; i++)
             {
-                for (j = i; j < (albums.Count < i + 20 ? albums.Count : i + 20); j++)
-                {
-                    urls[(int)Math.Floor((decimal)j / 20)] += albums[j].id + ",";
-                }
-                i += j;
+                urls[(int)Math.Floor((decimal)(i / 20))] += albums[i].id + ",";
             }
             foreach (var url in urls)
             {
@@ -314,7 +308,7 @@ namespace SpotifyR
             var userId = GetUser(_accessToken).id;
             List<ArtistDB> likedArtists = new List<ArtistDB>();
             ratings = ratings.FindAll(r => r.userId == userId);
-            
+
             if (ratings != null)
             {
                 foreach (Artist artist in artists.ToList())
