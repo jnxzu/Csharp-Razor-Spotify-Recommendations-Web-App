@@ -1,7 +1,10 @@
-obj/*
-bin/*
-.vscode/*
+obj
+bin
+Migrations
+.vscode
 appsettings.Development.json
 appsettings.json
 *.7z
 *.zip
+publish
+Data/SpotifyAuth.cs
