@@ -211,7 +211,7 @@
                 $(this).parent().find("span").text("l i k e d");
                 var id = $(this).parent().parent().find(".hidden-id").text();
                 $.ajax({
-                    url: "Dashboard?handler=Rate",
+                    url: "dashboard?handler=Rate",
                     type: "POST",
                     data: {
                         ArtistId: id,
@@ -225,7 +225,7 @@
                 $(this).parent().find("span").text("h a t e d");
                 var id = $(this).parent().parent().find(".hidden-id").text();
                 $.ajax({
-                    url: "Dashboard?handler=Rate",
+                    url: "dashboard?handler=Rate",
                     type: "POST",
                     data: {
                         ArtistId: id,
