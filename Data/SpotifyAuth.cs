@@ -1,5 +1,6 @@
 namespace SpotifyR
 {
+    // what the fuck
     class SpotifyAuth
     {
         public string clientID = "826fdbe3b212461793a5024c3d89f96b";
